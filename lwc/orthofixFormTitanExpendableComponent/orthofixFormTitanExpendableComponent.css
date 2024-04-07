@@ -1,0 +1,29 @@
+.slds-section {
+    border: 1px solid #CCCCCC;
+    border-radius: 8px;
+}
+
+.customfont {
+    text-align: left;
+    letter-spacing: 0px;
+    color: #202020;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.slds-section__title-action {
+    background: transparent;
+}
+
+.custommobilefont {
+    text-align: left;
+    letter-spacing: 0px;
+    color: #202020;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: .65rem;
+}
+
+.of-form-titan-expandable-component-button{
+    justify-content: space-between;
+}

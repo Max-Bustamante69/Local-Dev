@@ -1,0 +1,76 @@
+<template>
+
+    <c-orthofix-order-form-insurance-item
+        title='Primary Insurance'
+        form-data={formData}
+        edited-data={editedData} 
+        picklist-options={picklistOptions}
+        required-fields={requiredFields}
+        show-checkbox='false'
+        is-checked='true'
+        object-name='primary'
+        show-add-favorite-insurance-button={showAddFavoriteInsuranceButton}
+        disable-form={disableForm}
+    ></c-orthofix-order-form-insurance-item>
+
+    <c-orthofix-order-form-insurance-item
+            title='Secondary Insurance'
+            form-data={formData}
+            edited-data={editedData}
+            picklist-options={picklistOptions}
+            required-fields={requiredFields}
+            show-checkbox="true"
+            is-checked='false'
+            object-name='secondary'
+            show-add-favorite-insurance-button={showAddFavoriteInsuranceButton}
+            disable-form={disableForm}
+    ></c-orthofix-order-form-insurance-item>
+
+    <c-orthofix-order-form-insurance-item
+            title='Tertiary Insurance'
+            form-data={formData}
+            edited-data={editedData}
+            picklist-options={picklistOptions}
+            required-fields={requiredFields}
+            show-checkbox="true"
+            is-checked='false'
+            object-name='tertiary'
+            show-add-favorite-insurance-button={showAddFavoriteInsuranceButton}
+            disable-form={disableForm}
+    ></c-orthofix-order-form-insurance-item>
+
+    <c-orthofix-order-form-insurance-item
+            title='Quaternary Insurance'
+            form-data={formData}
+            edited-data={editedData}
+            picklist-options={picklistOptions}
+            required-fields={requiredFields}
+            show-checkbox="true"
+            is-checked='false'
+            object-name='quaternary'
+            show-add-favorite-insurance-button={showAddFavoriteInsuranceButton}
+            disable-form={disableForm}
+    ></c-orthofix-order-form-insurance-item>
+
+<!--    <div class="slds-grid slds-wrap slds-p-bottom_medium slds-border_bottom" style='color:silver;'>
+        <div class="slds-col slds-size_12-of-12 slds-p-around_medium slds-p-top_large slds-p-bottom_large">
+            <div class="slds-float_left">
+                <lightning-input label="" class="" type="checkbox" disabled="true"></lightning-input>
+            </div>
+            <div class="slds-float_left">
+                <span class="slds-text-heading_small">Tertiary Insurance</span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_12-of-12 slds-p-around_medium slds-p-top_large slds-p-bottom_large slds-border_top">
+            <div class="slds-float_left">
+                <lightning-input label="" class="" type="checkbox" disabled="true"></lightning-input>
+            </div>
+            <div class="slds-float_left">
+                <span class="slds-text-heading_small">Quaternary Insurance</span>
+            </div>
+        </div>
+    </div>-->
+
+
+
+</template>

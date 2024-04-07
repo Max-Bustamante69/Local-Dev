@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+
+            <property name="insightReportUrl" type="String" label="Insight Report URL"
+                description="Enter Insight Report URL." default="https://orthofix.com" />
+
+            <property name="privacyPolicyUrl" type="String" label="Privacy Policy URL"
+                description="Enter Privacy Policy URL." default="https://orthofix.com" />
+
+            <property name="contactUsUrl" type="String" label="Contact Us"
+                description="Enter Contact Us URL." default="https://orthofix.com" />
+
+            <property name="appName" type="String" label="Application Name"
+                description="Enter application name." default="STIM CONNECT" />
+
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

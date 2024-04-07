@@ -1,0 +1,25 @@
+<template>
+
+    <div class="slds-grid slds-wrap app-testnav-container">
+
+        <div class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_4-of-12">
+            {appName}
+        </div>
+
+        
+        <!-- NAVIGATION MENU -->
+        <div class="slds-col slds-p-around_medium slds-medium-size_8-of-12">
+            <div class="slds-grid" >
+                <template for:each={menuItems}
+                        for:item="item">
+
+                    <div key={item.id} data-id={item.id} onclick={onMenuItemSelect} class="app-link-button slds-col slds-align_absolute-center slds-size_4-of-12 slds-medium-size_2-of-12 slds-large-size_2-of-12">
+                            {item.label}
+                    </div>
+
+                </template>
+            </div>
+        </div>
+
+    </div>
+</template>

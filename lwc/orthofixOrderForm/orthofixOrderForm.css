@@ -1,0 +1,29 @@
+.green-icon{
+    --slds-c-icon-color-foreground-default:green;
+}
+.slds-modal__header {
+    border-bottom-style: none !important;
+}
+
+
+/* Testing for sticky header in Order Form */
+
+
+.sticky-header {
+
+
+    background-color: white;
+    z-index: 4;
+}
+
+
+@media screen and (max-width: 768px) {
+    .sticky-header {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+    }
+}
+
+
+

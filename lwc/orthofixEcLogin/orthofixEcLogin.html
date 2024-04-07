@@ -1,0 +1,40 @@
+<template>
+
+    <div class="slds-is-relative" style="position: absolute; width: 100vw; height: 100vh;">
+        <lightning-spinner if:true={loader} alternative-text="Loading" size="medium" class="slds-align_absolute-center">
+        </lightning-spinner>
+    </div>
+
+
+    <div class="slds-grid app-testnav-container o-login__main-container" style="background-color: white;">
+
+        <!-- LOGO and FORM -->
+        <div class="slds-col slds-size_12-of-12 slds-medium-size_5-of-12 slds-align_absolute-center">
+
+            <div class="o-login__form-container">
+                <img src={orthofixLogoUrl} style="width: 250px;" />
+                <br />
+                <br />
+                <lightning-input type="text" label="USERNAME" onkeypress={handleEnter} onchange={handleUsernameChange}
+                    required></lightning-input>
+                <br />
+                <lightning-input type="password" label="PASSWORD" onkeypress={handleEnter}
+                    onchange={handlePasswordChange} required></lightning-input>
+                <br />
+                <lightning-button type="button" variant="brand" label="Login" onclick={handleLogin}></lightning-button>
+                <br />
+                <br />
+                <div style="max-width: 200px; color: red;">{errorMsg}</div>
+                <br />
+                <a href="#" class="slds-align_absolute-center o-login__forgot-password"
+                    onclick={handleForgotPassword}>Forgot your password?</a>
+            </div>
+
+        </div>
+
+        <!-- BANNER -->
+        <div class="slds-col app-login-banner-div slds-size_7-of-12 slds-show_medium">
+            <img class="o-login__banner-image" src={orthofixBannerUrl} />
+        </div>
+    </div>
+</template>

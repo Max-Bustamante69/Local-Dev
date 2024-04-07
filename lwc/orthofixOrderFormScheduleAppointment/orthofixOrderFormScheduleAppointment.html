@@ -1,0 +1,84 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 03-07-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-line slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                <span class="slds-text-heading_small custom-underline custom-bold">{ScheduleHeader}</span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Patient"
+                                 name="patientInformation.lastName"
+                                 value={patientName}
+                                 disabled="true"
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Physician"
+                                 value={physicianName}
+                                 disabled="true"
+                ></lightning-input>
+            </div>
+        </div>
+        
+
+       
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="date" label="Appointment Date" value={selectedDate} onchange={handleDateChange} disabled={makeEventReadOnly}></lightning-input>
+            
+            </div>
+            
+           
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-large-size_3-of-12">
+        <div class="slds-p-around_x-small slds-m-right_large">
+            <lightning-input type="time" label="Appointment Time" value={selectedTime} onchange={handleTimeChange} disabled={makeEventReadOnly}></lightning-input>
+        </div>
+    </div>
+       
+
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input-address
+                        name="eventInformation"
+                        address-label="Address"
+                        street-label="Street"
+                        city-label="City"
+                        country-label="Country"
+                        province-label="State"
+                        postal-code-label="Zip Code"
+                        field-level-help="Address"
+                        onchange={handleAddressChange}
+                        show-address-lookup
+                        disabled={makeEventReadOnly}>
+                       
+                </lightning-input-address>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_5-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-textarea 
+                name="eventInformation.notes" 
+                label="Notes" 
+                value="" 
+                placeholder="type here..."
+                onchange={handleInputChange}
+                disabled={makeEventReadOnly}
+                ></lightning-textarea>
+            </div>
+        </div>
+    </div>
+
+</template>

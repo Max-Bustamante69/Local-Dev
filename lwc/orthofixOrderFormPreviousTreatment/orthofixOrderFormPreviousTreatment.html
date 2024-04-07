@@ -1,0 +1,97 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 02-26-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="slds-grid slds-wrap">
+
+        <div class="slds-col slds-size_12-of-12">
+            <lightning-input
+                    label={title}
+                    name={title}
+                    type="checkbox"
+                    checked={toggleChecked}
+                    onchange={changeToggle}
+                    disabled={clinicalDisableForm}
+            ></lightning-input>
+        </div>
+
+        <template if:true={toggleChecked}>
+            <template if:true={isOther}>
+                <div class="slds-col slds-size_8-of-12">
+                    <div class="slds-p-around_x-small">
+                        <lightning-textarea
+                                label="DESCRIPTION"
+                                name="previousTreatmentOther"
+                                required="true"
+                                value={formData.previousTreatmentOther}
+                                onchange={handleInputChange}
+                                disabled={clinicalDisableForm}
+                        >
+                        </lightning-textarea>
+                    </div>
+                </div>
+            </template>
+        </template>
+
+        <template if:true={toggleChecked}>
+            <template if:true={isFusion}>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-p-around_x-small">
+                        <lightning-input
+                                type="date"
+                                label="Fusion Date"
+                                required="true"
+                                name="fusionDate"
+                                value={formData.fusionDate}
+                                onchange={handleInputChange}
+                                disabled={clinicalDisableForm}
+                        >
+                        </lightning-input>
+                    </div>
+                </div>
+            </template>
+        </template>
+
+        <template if:true={toggleChecked}>
+            <template if:true={isFixation}>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-p-around_x-small">
+                        <lightning-input
+                                type="date"
+                                label="Fixation Date"
+                                name="fixationDate"
+                                required="true"
+                                value={formData.fixationDate}
+                                onchange={handleInputChange}
+                                disabled={clinicalDisableForm}
+                        >
+                        </lightning-input>
+                    </div>
+                </div>
+            </template>
+        </template>
+
+        <template if:true={toggleChecked}>
+            <template if:true={isRevision}>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-p-around_x-small">
+                        <lightning-input
+                                type="date"
+                                label="Revision Date"
+                                name="revisionDate"
+                                required="true"
+                                value={formData.revisionDate}
+                                onchange={handleInputChange}
+                                disabled={clinicalDisableForm}
+                        >
+                        </lightning-input>
+                    </div>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

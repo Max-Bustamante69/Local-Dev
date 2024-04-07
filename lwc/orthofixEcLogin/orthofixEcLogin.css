@@ -1,0 +1,68 @@
+/* .app-login-banner-div {
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    background-size: 100% 100%;
+} */
+
+
+/* sebastian correa 02/26/2024 5pm est */
+
+
+:host{
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100dvh;
+    /* needs to be set globally */
+    --slds-c-input-radius-border:3px;
+    --slds-c-button-radius-border:3px;
+    --of-button-font-size:0.75rem;
+    --lwc-brandTextLink: #009ADD;
+    
+}
+
+.o-login__main-container{
+    width: 100%;
+    height:100%;
+}
+
+.o-login__form-container{
+    min-width: 250px;
+    padding-left: 60px;
+    padding-right: 60px;
+    /* needs to be set globally */
+    --slds-c-button-brand-color-background : #009ADD;
+    position: relative;
+    z-index: 1;
+}
+
+.o-login__form-container label{
+    /*sds-label is correct not sure we need this */
+    font-size:.75rem;
+    text-transform:uppercase;
+}
+
+.o-login__form-container input{
+    /* border-radius: 3px */
+}
+
+.o-login__form-container button{
+    width:100%;
+    /* border-radius:3px; */
+    /* font-size: 0.75rem; */
+    /* text-transform:capitalize; */
+    text-align: right;
+    border-color: transparent;
+    display: block;
+    text-align: left;
+    padding-left: 60px;
+    font-size: var(--of-button-font-size);
+}
+
+.slds-grid.app-testnav-container {}
+
+.o-login__banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

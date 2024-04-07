@@ -1,0 +1,15 @@
+@import 'c/orthofixSharedStyles';
+
+.test-scm{
+    color: red;
+}
+
+.of-document-upload-table th, .of-document-upload-table td {
+    max-width: 27vw;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.of-document-upload-table th > div, .of-document-upload-table td > div {
+    padding-left: 2px;
+    padding-right: 2px;
+}

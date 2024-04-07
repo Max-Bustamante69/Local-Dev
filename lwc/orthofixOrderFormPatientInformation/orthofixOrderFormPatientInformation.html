@@ -1,0 +1,554 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 03-27-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+
+<template>
+
+<!--    <div class="slds-hide_large">Hide Large</div>
+    <div class="slds-hide_medium">Hide Medium</div>
+    <div class="slds-hide_small">Hide Small</div>
+
+    <div class="slds-show_large">Show Large</div>
+    <div class="slds-show_medium">Show Medium</div>
+    <div class="slds-show_small">Show Small</div>-->
+    <template if:true={displaySalesRepField}>
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                <span class="slds-text-heading_small custom-underline custom-bold">Sales Rep</span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-combobox
+                        name="patientInformation.territoryManager"
+                        label="Select Territory Manager"
+                        placeholder="Select Territory Manager"
+                        options={picklistOptions.territoryManagers}
+                        value={formData.patientInformation.territoryManager}
+                        onchange={handleInputChange}
+                        required={requiredFields.patientInformation.territoryManager}
+                        disabled={disableForm}>
+                </lightning-combobox>
+            </div>
+        </div>
+    </div>
+</template>
+
+    <div class="slds-col slds-size_12-of-12">
+            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                <span class="slds-text-heading_small custom-underline custom-bold">Product Information</span>
+            </div>
+    </div>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-combobox
+                        name="patientInformation.productType"
+                        label="Select Product Type"
+                        placeholder="Select Product Type"
+                        options={picklistOptions.productTypes}
+                        value={formData.patientInformation.productType}
+                        onchange={handleInputChange}
+                        required={requiredFields.patientInformation.productType}
+                        disabled={disableForm}
+                ></lightning-combobox>
+            </div>
+        </div>
+        <div class="slds-col slds-medium-size_4-of-12 slds-large-size_9-of-12"></div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-line slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                <span class="slds-text-heading_small custom-underline custom-bold">Patient Information</span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="First Name"
+                                 name="patientInformation.firstName"
+                                 value={formData.patientInformation.firstName}
+                                 onchange={handleInputChange}
+                                 required={requiredFields.patientInformation.firstName}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Last Name"
+                                 name="patientInformation.lastName"
+                                 value={formData.patientInformation.lastName}
+                                 onchange={handleInputChange}
+                                 required={requiredFields.patientInformation.lastName}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-combobox
+                        name="patientInformation.gender"
+                        label="Gender"
+                        placeholder="Select a Gender"
+                        options={picklistOptions.genders}
+                        value={formData.patientInformation.gender}
+                        onchange={handleInputChange}
+                        required={requiredFields.patientInformation.gender}
+                        disabled={disableForm}
+                ></lightning-combobox>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="date"
+                                 label="Birth Date"
+                                 name="patientInformation.birthDate"
+                                 value={formData.patientInformation.birthDate}
+                                 onchange={handleInputChange}
+                                 required={requiredFields.patientInformation.birthDate}
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+
+        
+        <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input-address
+                        name="patientInformation"
+                        address-label="Address"
+                        street-label="Street"
+                        city-label="City"
+                        country-label="Country"
+                        province-label="State"
+                        postal-code-label="Zip Code"
+                        street={formData.patientInformation.street}
+                        city={formData.patientInformation.city}
+                        country={formData.patientInformation.country}
+                        province={formData.patientInformation.province}
+                        postal-code={formData.patientInformation.postalCode}
+                        required
+                        field-level-help="Address"
+                        onchange={handleAddressChange}
+                        read-only="true"
+                        disabled={disableForm}
+                        show-address-lookup>
+                        
+                </lightning-input-address>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="tel"
+                                 label="Phone"
+                                 name="patientInformation.phone"
+                                 value={formattedPhoneNumber}
+                                 onchange={handleInputChange}
+                                 required={requiredFields.patientInformation.phone}
+                                 max-length=12
+                                 pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}$"
+                                 placeholder="_ _ _ -_ _ _- _ _ _ _"
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+               <lightning-combobox
+                        name="patientInformation.phonetype"
+                        label="Phone Type"
+                        placeholder="Phone Type"
+                        options={picklistOptions.phonetype}
+                        value={formData.patientInformation.phonetype}
+                        onchange={handleInputChange}
+                        required={requiredFields.patientInformation.phonetype}
+                        disabled={disableForm}
+                ></lightning-combobox>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input 
+                type="email"
+                label="Email"
+                placeholder="example@domain.com"
+                name="patientInformation.email"
+                data-name="patientInformation.email"
+                value={formData.patientInformation.email}
+                onchange={handleInputChange}
+                max-length=100
+                disabled={disableForm}
+            ></lightning-input>
+            </div>
+        </div>
+    </div>
+
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                <span class="slds-text-heading_small custom-underline custom-bold">Emergency Contact Information</span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Name"
+                                 name="patientInformation.emergencyContact.name"
+                                 value={formData.patientInformation.emergencyContact.name}
+                                 required={requiredFields.patientInformation.emergencyContact.name}
+                                 onchange={handleInputChange}
+                                 placeholder="FirstName LastName"
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Relationship"
+                                 name="patientInformation.emergencyContact.relationship"
+                                 value={formData.patientInformation.emergencyContact.relationship}
+                                 required={requiredFields.patientInformation.emergencyContact.relationship}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="tel"
+                                 label="Phone"
+                                 name="patientInformation.emergencyContact.phone"
+                                 value={emergencyPhoneNumber}
+                                 required={requiredFields.patientInformation.emergencyContact.phone}
+                                 onchange={handleInputChange}
+                                 max-length=12
+                                 pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}$"
+                                 placeholder="_ _ _ -_ _ _- _ _ _ _"
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Extension"
+                                 name="patientInformation.emergencyContact.extension"
+                                 value={formData.patientInformation.emergencyContact.extension}
+                                 required={requiredFields.patientInformation.emergencyContact.extension}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+    </div>
+
+ 
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                <span class="slds-text-heading_small custom-underline custom-bold">Prescriber Information</span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <c-custom-lookup-lwc icon-name="standard:contact"
+                                     s-object-api-name="Contact"
+                                     search-field="National_Provider_Identifier__c"
+                                     label="Search for Physician"
+                                     onlookupupdate={prescriberSelect}
+                                     placeholder="type here..."
+                                     disabled={disableForm}>      
+                                    </c-custom-lookup-lwc>
+            </div>
+            <div class="slds-p-around_xx-small slds-m-right_large">
+                <p><lightning-formatted-url value={label.navigateToNPIRegistryUrl}
+                    label="Search for Physician in the NPI Registry"
+                    target="_blank"
+                    ></lightning-formatted-url></p>
+            </div>
+            
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-combobox
+                        name="patientInformation.prescriber.id"
+                        label="Select a Favorite Physician"
+                        placeholder="Select a Favorite Physician"
+                        options={picklistOptions.favoritePhysicians}
+                        value={formData.patientInformation.prescriber.favPhysician}
+                        onchange={handleChangeFavoritePhysicians}
+                        required={requiredFields.patientInformation.prescriber.favPhysician}
+                        disabled={disableForm}
+                ></lightning-combobox>
+            </div>
+            <div class="slds-p-around_xx-small slds-m-right_large slds-float_left">
+                <p><lightning-formatted-url value={navigateToPhysicianListview}
+                                            label="EDIT FAVORITES"
+                                            target="_blank"
+                ></lightning-formatted-url></p>
+            </div>
+        </div>
+        <div class="slds-col slds-size_6-of-12">
+            <div class="slds-p-top_medium">
+                <span class="slds-text-heading_small slds-m-right_small">Physician Information</span>
+            </div>
+        </div>
+        <!-- <div class="slds-col slds-size_6-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <template if:true={showAddFavoriteButton}>
+                    <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleAddToFavoritesClick}>ADD TO FAVORITE</button>
+                </template>
+            </div>
+        </div> -->
+        <div class="slds-col slds-medium-size_6-of-12 slds-large-size_6-of-12"></div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="First Name"
+                                 name="patientInformation.prescriber.firstName"
+                                 data-name="patientInformation.prescriber.firstName"
+                                 value={formData.patientInformation.prescriber.firstName}
+                                 required={requiredFields.patientInformation.prescriber.firstName}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Last Name"
+                                 name="patientInformation.prescriber.lastName"
+                                 data-name="patientInformation.prescriber.lastName"
+                                 value={formData.patientInformation.prescriber.lastName}
+                                 required={requiredFields.patientInformation.prescriber.lastName}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="National Provider Identifier (NPI)"
+                                 name="patientInformation.prescriber.npi"
+                                 data-name="patientInformation.prescriber.npi"
+                                 value={formData.patientInformation.prescriber.npi}
+                                 required={requiredFields.patientInformation.prescriber.npi}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_2-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Licence #"
+                                 name="patientInformation.prescriber.licence"
+                                 data-name="patientInformation.prescriber.licence"
+                                 value={formData.patientInformation.prescriber.licence}
+                                 required={requiredFields.patientInformation.prescriber.licence}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+
+
+        <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="tel"
+                                 label="Phone"
+                                 name="patientInformation.prescriber.phone"
+                                 data-name="patientInformation.prescriber.phone"
+                                 value={formData.patientInformation.prescriber.phone}
+                                 required={requiredFields.patientInformation.prescriber.phone}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                ></lightning-input>
+            </div>
+        </div> -->
+        <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-p-around_x-small">
+                <lightning-input-address
+                        name="patientInformation.prescriber"
+                        address-label="Address"
+                        street-label="Street"
+                        city-label="City"
+                        country-label="Country"
+                        province-label="State"
+                        postal-code-label="Zip Code"
+                        street={prescriberAddress.street}
+                        city={prescriberAddress.city}
+                        country={prescriberAddress.country}
+                        province={prescriberAddress.province}
+                        postal-code={prescriberAddress.postalCode}
+                        required
+                        field-level-help="Address"
+                        onchange={handleAddressChange}
+                        read-only="true"
+                        disabled={disableForm}
+                        show-address-lookup>
+                </lightning-input-address>
+            </div>
+        </div>
+
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+               <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="tel"
+                                 label="Phone"
+                                 name="patientInformation.prescriber.phone"
+                                 data-name="patientInformation.prescriber.phone"
+                                 value={physicicanPhoneNumber}
+                                 required={requiredFields.patientInformation.prescriber.phone}
+                                 onchange={handleInputChange}
+                                 max-length=12
+                                 pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}$"
+                                 placeholder="_ _ _ -_ _ _- _ _ _ _"
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+            </div>
+        </div>
+        <div class="slds-col slds-medium-size_6-of-12 slds-large-size_6-of-12"></div>
+        <template if:true={showAddFavoriteButton}>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+            
+               <div class="slds-p-around_x-small slds-m-right_large ">
+                
+                    <button type="button" class="slds-button slds-button_neutral" disabled={disableForm} onclick={handleAddToFavoritesClick}>ADD TO FAVORITE</button>
+               
+                </div>
+            
+        </div>
+    </template>
+        <!-- <div class="slds-col slds-size_6-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <template if:true={showAddFavoriteButton}>
+                    <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleAddToFavoritesClick}>ADD TO FAVORITE</button>
+                </template>
+            </div>
+        </div> -->
+        <div class="slds-col slds-medium-size_6-of-12 slds-large-size_6-of-12"></div>
+
+    </div>
+
+
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                <span class="slds-text-heading_small custom-underline custom-bold">Primary Care Physician</span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <c-custom-lookup-lwc icon-name="standard:contact"
+                                     s-object-api-name="Contact"
+                                     search-field="Name"
+                                     label="Search Primary Care Physician"
+                                     onlookupupdate={primaryCarePhysicianSelect}
+                                     placeholder="type here..."
+                                     disabled={disableForm}></c-custom-lookup-lwc>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Name"
+                                 name="patientInformation.primaryCarePhysician.name"
+                                 data-name="patientInformation.primaryCarePhysician.name"
+                                 value={formData.patientInformation.primaryCarePhysician.name}
+                                 required={requiredFields.patientInformation.primaryCarePhysician.name}
+                                 onchange={handleInputChange}
+                                 placeholder="FirstName LastName"
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="NPI"
+                                 data-name="patientInformation.primaryCarePhysician.npi"
+                                 name="patientInformation.primaryCarePhysician.npi"
+                                 value={formData.patientInformation.primaryCarePhysician.npi}
+                                 required={requiredFields.patientInformation.primaryCarePhysician.npi}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="tel"
+                                 label="Phone"
+                                 name="patientInformation.primaryCarePhysician.phone"
+                                 value={primaryCarePhoneNumber}
+                                 data-name="patientInformation.primaryCarePhysician.phone"
+                                 required={requiredFields.patientInformation.primaryCarePhysician.phone}
+                                 onchange={handleInputChange}
+                                 max-length=12
+                                 pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}$"
+                                 placeholder="_ _ _ -_ _ _- _ _ _ _"
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Fax"
+                                 name="patientInformation.primaryCarePhysician.fax"
+                                 data-name="patientInformation.primaryCarePhysician.fax"
+                                 value={formData.patientInformation.primaryCarePhysician.fax}
+                                 required={requiredFields.patientInformation.primaryCarePhysician.fax}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+         <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                                 label="Referral Coordinator"
+                                 name="patientInformation.primaryCarePhysician.refferalcoordinator"
+                                 data-name="patientInformation.primaryCarePhysician.refferalcoordinator"
+                                 value={formData.patientInformation.primaryCarePhysician.refferalcoordinator}
+                                 required={requiredFields.patientInformation.primaryCarePhysician.refferalcoordinator}
+                                 onchange={handleInputChange}
+                                 max-length=100
+                                 disabled={disableForm}
+                ></lightning-input>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,129 @@
+<template>
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+        <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+            <div class="slds-line">
+                <span class="slds-text-heading_small custom-bold">
+                    Clinical Information
+                </span>
+                <span style="color:red;" class="slds-text-heading_small custom-bold slds-p-left_small">
+                    Ensure the Imaged Information is an identical replication of all pages of the paper document in every way
+                </span>
+            </div>
+        </div>
+
+        <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+            <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" aria-label="">
+                <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="" scope="col">
+                        <div class="slds-p-around_small slds-truncate" title="">Submitted</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-p-around_small slds-truncate" title="">Documentation</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-p-around_small slds-truncate" title="">Submitted By</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-p-around_small slds-truncate" title="">Date</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-p-around_small slds-truncate" title="">Action</div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="slds-hint-parent">
+                    <td>
+                        <div class="slds-p-around_small slds-truncate" title="">X</div>
+                    </td>
+                    <td>
+                        <div class="slds-p-around_small slds-truncate" title="">
+                            Document Upload<br/>
+                            (Please check all that are included)
+                        </div>
+                    </td>
+                    <td>
+                        <div class="slds-p-around_small slds-truncate" title="">-</div>
+                    </td>
+                    <td>
+                        <div class="slds-p-around_small slds-truncate" title="">-</div>
+                    </td>
+                    <td>
+                        <div class="slds-p-around_small slds-truncate" title="">
+                            <button type="button" class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small" style="border: 2px solid rgb(1 118 211);">UPLOAD DOCUMENTS</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="slds-hint-parent">
+                    <td>
+                        <div class="slds-p-around_small slds-truncate" title=""></div>
+                    </td>
+                    <td colspan="3">
+                        <div class="slds-p-around_small slds-truncate" title="">
+                            <div class="slds-form-element">
+                                <div class="slds-form-element__control">
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="Patient Demographics"></lightning-input>
+                                    </div>
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="Clinical Notes"></lightning-input>
+                                    </div>
+                                    <div class="slds-clear"></div>
+                                </div>
+
+                                <div class="slds-form-element__control">
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="Prescription"></lightning-input>
+                                    </div>
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="Op Report"></lightning-input>
+                                    </div>
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="DCS"></lightning-input>
+                                    </div>
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="Fracture Gap"></lightning-input>
+                                    </div>
+                                </div>
+
+                                <div class="slds-form-element__control">
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="CMN"></lightning-input>
+                                    </div>
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="LOMN"></lightning-input>
+                                    </div>
+                                </div>
+
+                                <div class="slds-form-element__control">
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                        <lightning-input class="" type="checkbox" label="Other"></lightning-input>
+                                    </div>
+                                    <div class="slds-float_left slds-p-right_small">
+                                        <lightning-input type="text"
+                                                         label=""
+                                                         name="other"
+                                                         value={formData.other}
+                                                         required={requiredFields.other}
+                                                         onchange={handleInputChange}
+                                                         disabled="true"
+                                                         max-length=100
+                                        ></lightning-input>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="vertical-align: bottom;">
+                        <div class="slds-p-around_small slds-truncate" title="">
+                            <button type="button" class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small" style="color:green; border:2px solid green;">GENERATE & SIGN</button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>

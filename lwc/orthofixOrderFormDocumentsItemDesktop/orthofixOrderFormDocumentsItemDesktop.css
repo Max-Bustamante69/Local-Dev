@@ -1,0 +1,47 @@
+@import 'c/orthofixSharedStyles';
+
+.slds-modal__container{
+    max-width: 90% !important;
+    width: 1300px !important;
+
+    @media screen and (max-width: 767px){
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+.button-margin{
+    background-color: #0b5cab !important;
+    /* margin-bottom: 130px; */
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    /* border-color: #0b5cab !important; */
+}
+.thstyle{
+    width: 10% !important;
+}
+.icon-class{
+    fill: green !important;
+}
+
+.icon-class-delete{
+    --slds-c-icon-color-foreground: #CB0015 !important;
+}
+/* .slds-button_icon-x-small .slds-button__icon, .slds-button--icon-x-small .slds-button__icon {
+    color: red !important;
+} */
+
+.of-document-upload-table th, .of-document-upload-table td {
+    max-width: 27vw;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.of-document-upload-table th > div, .of-document-upload-table td > div {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.sm-buttons-container{
+    display: flex;
+}

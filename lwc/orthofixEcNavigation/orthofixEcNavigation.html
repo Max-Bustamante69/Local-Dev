@@ -1,0 +1,49 @@
+<template>
+
+    <div class="slds-grid slds-wrap app-testnav-container">
+
+        <!-- LOGO -->
+        <div class="slds-col slds-p-around_medium slds-size_2-of-12" style="cursor: pointer;" onclick={onDashboardMenuItemSelect}>
+            <img src="/public/assets/imgs/orthofix-logo.png" alt="logo" style="height: 30px;" />
+        </div>
+
+        <!-- NAVIGATION MENU -->
+        <template lwc:if={isSearchPage}>
+            <div class="slds-col slds-p-around_medium slds-size_8-of-12"></div>
+        </template>
+        <template lwc:else>
+            <div class="slds-col slds-p-around_medium slds-size_8-of-12">
+                <div class="slds-grid" style="height: 30px;">
+                    <template for:each={menuItemsFiltered}
+                            for:item="item">
+
+                        <div key={item.id} data-id={item.id} style="cursor: pointer;" onclick={onMenuItemSelect} class="slds-col slds-align_absolute-center slds-size_4-of-12 slds-medium-size_2-of-12 slds-large-size_2-of-12">
+                            {item.name}
+                        </div>
+
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- USER MENU -->
+        <div class="slds-col slds-p-around_medium slds-size_2-of-12">
+            <div class="slds-grid" style="height: 30px;">
+                <template lwc:if={isSearchPage}>
+                </template>
+                <template lwc:else>
+                    <div onclick={onSearchMenuItemSelect} class="slds-col slds-align_absolute-center slds-size_4-of-12">
+                        <lightning-icon class="app-search-icon" style="cursor: pointer;" icon-name="utility:search" alternative-text="Search" size="small" title="Search"></lightning-icon>
+                    </div>
+                </template>
+                <div class="slds-col slds-align_absolute-center slds-size_4-of-12">
+                    <lightning-icon class="app-search-icon" icon-name="custom:custom53" alternative-text="Search" size="medium" title="Search"></lightning-icon>
+                </div>
+                <div class="slds-col slds-align_absolute-center slds-size_4-of-12">
+                    User
+                </div>
+            </div>
+        </div>
+
+    </div>
+</template>

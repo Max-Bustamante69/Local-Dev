@@ -1,0 +1,140 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 03-12-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+  @last modified on  : 03-12-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_12-of-12">
+            <lightning-input type="checkbox" name="Type__c" label={title} value={toggleChecked}
+                             checked={toggleChecked} onchange={changeToggle} disabled={clinicalDisableForm}></lightning-input>
+        </div>
+        <template if:true={toggleChecked}>
+            <template if:false={physioAccel}>
+                <template if:false={other}>
+                    <div class="slds-p-left_large slds-col slds-size_3-of-12">
+                        <div class="slds-p-bottom_medium">
+                            <lightning-combobox
+                                    class="diagnosis-input"
+                                    name="Start__c"
+                                    placeholder="Starting Level"
+                                    label="From"
+                                    value={diagnosisItem.Start__c}
+                                    options={picklistOptions.diagnosisStarts}
+                                    onchange={handleInputChange}
+                                    disabled={clinicalDisableForm}
+                            ></lightning-combobox>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_3-of-12">
+                        <div class="slds-p-left_medium slds-p-bottom_medium">
+                            <lightning-combobox
+                                    name="End__c"
+                                    placeholder="Ending Level"
+                                    label="To"
+                                    value={diagnosisItem.End__c}
+                                    options={picklistOptions.diagnosisEnds}
+                                    onchange={handleInputChange}
+                                    disabled={clinicalDisableForm}
+                            ></lightning-combobox>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={showGrade}>
+                    <div class="slds-col slds-size_3-of-12">
+                        <div class="slds-p-left_medium slds-p-bottom_medium">
+                            <lightning-combobox
+                                    name="Grade__c"
+                                    placeholder="Grade"
+                                    label="GRADE"
+                                    required="true"
+                                    options={picklistOptions.diagnosisgrade}
+                                    value={diagnosisItem.Grade__c}
+                                    onchange={handleInputChange}
+                                    disabled={clinicalDisableForm}
+                            ></lightning-combobox>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={other}>
+                    <div class="slds-col slds-p-left_large slds-size_6-of-12">
+                        <div class="slds-p-bottom_medium">
+                            <lightning-textarea
+                                    name="Diagnosis_Other__c"
+                                    label="Please Specify"
+                                    required="true"
+                                    value={diagnosisItem.Diagnosis_Other__c}
+                                    disabled={disabled}
+                                    onchange={handleInputChange}
+                            >
+                            </lightning-textarea>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-12"></div>
+                </template>
+            </template>
+            <template if:true={physioAccel}>
+                <div class="slds-p-left_large slds-col slds-size_3-of-12">
+                    <div class="slds-p-bottom_medium">
+                        <lightning-input type="date"
+                                         label="DATE"
+                                         placeholder="MM/DD/YYYY"
+                                         name="Date__c"
+                                         value={diagnosisItem.Date__c}
+                                         required="true"
+                                         onchange={handleInputChange}
+                                         disabled={clinicalDisableForm}
+                        ></lightning-input>
+                    </div>
+                </div>
+                <template if:true={showXRayDates}>
+                    <div class="slds-p-left_large slds-col slds-size_3-of-12">
+                        <div class="slds-p-left_medium slds-p-bottom_medium">
+                            <lightning-input type="date"
+                                             label="Current X-Ray Date"
+                                             placeholder="MM/DD/YYYY"
+                                             name="Current_XRayDate__c"
+                                             value={diagnosisItem.Current_XRayDate__c}
+                                             required="true"
+                                             onchange={handleInputChange}
+                                             disabled={clinicalDisableForm}
+                            ></lightning-input>
+                        </div>
+                    </div>
+                    <div class="slds-p-left_large slds-col slds-size_3-of-12">
+                        <div class="slds-p-left_medium slds-p-bottom_medium">
+                            <lightning-input type="date"
+                                             label="Baseline X-Ray Date"
+                                             placeholder="MM/DD/YYYY"
+                                             name="Baseline_XRayDate__c"
+                                             value={diagnosisItem.Baseline_XRayDate__c}
+                                             required="true"
+                                             onchange={handleInputChange}
+                                             disabled={clinicalDisableForm}
+                            ></lightning-input>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={other}>
+                    <div class="slds-col slds-p-left_large slds-size_6-of-12">
+                        <div class="slds-p-left_medium slds-p-bottom_medium">
+                            <lightning-textarea
+                                    name="Diagnosis_Other__c"
+                                    label="Please Specify"
+                                    required="true"
+                                    value={diagnosisItem.Diagnosis_Other__c}
+                                    disabled={disabled}
+                                    onchange={handleInputChange}
+                            >
+                            </lightning-textarea>
+                        </div>
+                    </div>
+                </template>
+            </template>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,67 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 03-11-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="slds-modal__container app-order-create-container">
+        <header class="slds-modal__header">
+            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+            title="Close" onclick={handleEditClickCancel}>
+            <lightning-icon icon-name="utility:close" alternative-text="close"
+            variant="inverse" size="small"></lightning-icon>
+            <span class="slds-assistive-text">Close</span>
+            </button>
+            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">
+                {modalHeader} : {selectedRecordTypeName}
+            </h2>
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+           <lightning-accordion allow-multiple-sections-open="true" active-section-name={activeSectionNames}>
+                <lightning-record-edit-form object-api-name={objectName}
+                                            onload={handleLoad} 
+                                            record-type-id={selectedRecordType}
+                                            onsuccess={handleSuccess} 
+                                            onerror={handleError}>
+                    <lightning-messages></lightning-messages>                    
+
+                       <template if:true={uiRecordToDisplay}> 
+                            <lightning-layout multiple-rows="true">
+                                <lightning-layout-item size="12">
+                                    <template for:each={uiRecordToDisplay} for:item="section">
+                                        <template if:true={section.showSection}> 
+                                            <lightning-accordion-section key={section.id} name={section.id} label={section.heading}>
+                                                <lightning-layout multiple-rows="true">
+                                                    <template for:each={section.layoutRows} for:item="layoutRow">
+                                                        <template for:each={layoutRow.layoutItems} for:item="layoutItem">
+                                                            <template for:each={layoutItem.layoutComponents} for:item="layoutComponent">
+                                                               <template if:true={layoutComponent.showField}>  
+                                                                    <lightning-layout-item key={layoutComponent.apiName} size="6" padding="horizontal-small">
+                                                                        <lightning-input-field field-name={layoutComponent.apiName} required={layoutItem.required}></lightning-input-field>
+                                                                    </lightning-layout-item>
+                                                                </template> 
+                                                            </template>
+                                                        </template>
+                                                    </template>
+                                                </lightning-layout>
+                                            </lightning-accordion-section>
+                                        </template> 
+                                    </template>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </template> 
+                     
+                </lightning-record-edit-form>
+            </lightning-accordion> 
+        
+            <footer class="slds-card__footer">
+                <div class="slds-align_absolute-center">  
+                    <lightning-button class="slds-p-left_small" label="Cancel" title="Cancel" onclick={handleEditClickCancel} ></lightning-button>  
+                    <lightning-button class="slds-p-left_small" variant="brand" label="Save" title="Save" type="submit" onclick={handleSubmit}> </lightning-button>
+                </div>
+            </footer>
+        </div>
+    </div>
+</template>
