@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : manish.tyagi@argano.com
  * @group             : 
- * @last modified on  : 04-02-2024
+ * @last modified on  : 04-14-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 **/
 import {showSuccess, showError, showReduceErrors, showLoader, hideLoader} from 'c/orthofixNotificationUtility';
@@ -46,6 +46,13 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     @api orderCancelled;
     @track disablerequiredforPrecriptionCheck = true;
     loadFilesCalled = false;
+    @track selectedValueList = [];
+    @track selectedValue = [];
+    @track showOtherMultiSelect = false;
+    @track selectedValueOtherList = [];
+    selectedDocumentTypes=[];
+    selectedDocumentOtherTypes=[];
+
 
     connectedCallback() {
         this.loadFiles().catch(e => console.log(e));
@@ -141,6 +148,59 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         this.otherRequired = !this.otherDisabled;
     }
 
+    handleSelectOptionList(event){
+        let isChecked = false;
+        console.log('eventdetail>>', event.detail);
+        this.selectedValueList = event.detail;
+        
+        console.log('this.selectedValueList', this.selectedValueList);
+        this.showOtherMultiSelect = this.selectedValueList.includes('Other');
+
+        if(this.selectedValueList.includes('Prescription')){
+            isChecked = true;
+            console.log('inside 1')
+        } 
+        else{
+            isChecked = false;
+            console.log('inside 2')
+        }
+        console.log('isChecked', isChecked);
+        this.dispatchEvent(new CustomEvent('checkboxchange', { detail: isChecked }));
+
+
+        
+    }
+
+    
+        
+            
+        filePreview(event){
+            console.log(event.target.value);
+            console.log(event.target.dataset.ContentdocumentId);
+            this[NavigationMixin.Navigate]({ 
+                type:'standard__namedPage',
+                attributes:{ 
+                    pageName:'filePreview'
+                },
+                state:{ 
+                    selectedRecordId: event.target.value
+                }
+            })
+        }
+        
+        
+    
+
+    handleSelectOtherOptionList(event){
+        console.log(event.detail);
+        this.selectedValueOtherList = event.detail;
+        console.log('this.selectedValueOtherList', this.selectedValueOtherList);
+    }
+     
+     handleSelectOption(event){
+        console.log(event.detail);
+        this.selectedValue = event.detail;
+    }
 
     openfileUpload(event) {
         showLoader(this);
@@ -150,7 +210,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
                 const reader = new FileReader();
                 reader.onload = () => {
                     let base64 = reader.result.split(',')[1];
-                    uploadFile({ base64, filename:  file.name, recordId: this.myRecordId, docType: [...this.values].join(';'), docTypeOther: this.docTypeOther }).then(result=>{
+                    uploadFile({ base64, filename:  file.name, recordId: this.myRecordId, docType: [...this.selectedValueList].join(';'), docTypeOther: [...this.selectedValueOtherList].join(';')}).then(result=>{
                         showSuccess(this, 'Success', "File uploaded successfully");
                         this.loadFiles().catch(e => console.log(e));
                         
@@ -189,6 +249,8 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         showLoader(this);
         this.orderFiles = await getFiles({recordId: this.myRecordId});
         console.log(JSON.stringify(this.orderFiles));
+        console.log('Doc type',JSON.stringify(this.orderFiles.DocumentType__c));
+        console.log('Other doc type',this.orderFiles.DocumentType__c);
         console.log('this.orderFiles', this.orderFiles.length);
         hideLoader(this);
 
@@ -197,7 +259,29 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         const isFilesExist = false;
         console.log('isFilesExist', isFilesExist);
         this.dispatchEvent(new CustomEvent('fileexist', { detail: isFilesExist }));
+        }else{
+            let documentTypes = [];
+            let OtherdocumentTypes = [];
+            console.log('documentTypes', documentTypes);
+            console.log('OtherdocumentTypes', OtherdocumentTypes);
+            this.orderFiles.forEach(file => {
+                let docType = file.DocumentType__c;
+                let otherDocType = file.DocumentTypeOther__c;
+                if (docType) {
+                    documentTypes.push(docType);
+                }
+                if (otherDocType) {
+                    OtherdocumentTypes.push(otherDocType);
+                }
+            });
+            this.selectedDocumentTypes = documentTypes.join(',');
+            this.selectedDocumentOtherTypes = OtherdocumentTypes.join(',');
+            console.log('this.selectedDocumentTypes', this.selectedDocumentTypes);
+            console.log('this.selectedDocumentOtherTypes', this.selectedDocumentOtherTypes);
+           
         }
+        this.selectedDocumentTypes = documentTypes.join(',');
+        this.selectedDocumentOtherTypes = OtherdocumentTypes.join(',');
         
 
     }
@@ -244,11 +328,11 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     
     
 
-    renderedCallback() {
-    if (!this.loadFilesCalled) {
-        this.loadFiles().then(() => {
-            this.loadFilesCalled = true;
-        }).catch(e => console.log(e));
-        }
-    }   
+    // renderedCallback() {
+    // if (!this.loadFilesCalled) {
+    //     this.loadFiles().then(() => {
+    //         this.loadFilesCalled = true;
+    //     }).catch(e => console.log(e));
+    //     }
+    // }   
 }

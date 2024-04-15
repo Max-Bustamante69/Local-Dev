@@ -16,14 +16,7 @@ export default class OrthofixEcBottomMenu extends LightningElement {
 
     menuItems = [{
         id: 1,
-        label: 'Insight Report'
-    },{
-        id: 2,
-        label: 'Privacy Policy'
-    },{
-        id: 3,
-        label: 'Contact Us'
-    }];
+        label: 'Insight Report'}];
 
     onMenuItemSelect(e) {
         let navigateToMenuItem = this.menuItems.filter( item => 

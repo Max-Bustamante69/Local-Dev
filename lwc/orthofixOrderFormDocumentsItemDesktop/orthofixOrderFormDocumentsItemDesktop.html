@@ -2,7 +2,7 @@
   @description       : 
   @author            : Lokesh Kesava | lokesh.kesava@argano.com
   @group             : 
-  @last modified on  : 03-29-2024
+  @last modified on  : 04-14-2024
   @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 -->
 <template>
@@ -30,11 +30,17 @@
                     <th class="" scope="col">
                         <div class="slds-p-around_small slds-truncate" title="">Documentation</div>
                     </th>
+                    <th class="thstyle" scope="col">
+                        <div class="slds-p-around_small slds-truncate" title="">Document Type</div>
+                    </th>
                     <th class="" scope="col">
                         <div class="slds-p-around_small slds-truncate" title="">Submitted By</div>
                     </th>
                     <th class="" scope="col">
-                        <div class="slds-p-around_small slds-truncate" title="">Date</div>
+                        <div class="slds-p-around_small slds-truncate" title="">Submitted Date/Time</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-p-around_small slds-truncate" title="">View</div>
                     </th>
                     <th class="" scope="col">
                         <div class="slds-p-around_small slds-truncate" title=""></div>
@@ -60,15 +66,30 @@
                         </td>
                         <td>
                             <div class="slds-p-around_small slds-truncate" title="">
-                                {file.Owner.Name}
+                                {file.DocumentType__c}
                             </div>
                         </td>
                         <td>
                             <div class="slds-p-around_small slds-truncate" title="">
-                                <lightning-formatted-date-time value={file.CreatedDate}></lightning-formatted-date-time>
-
+                                {file.Owner.Name}
                             </div>
                         </td>
+                        
+                        <td>
+                            <div class="slds-p-around_small slds-truncate" title="">
+                                <!-- <lightning-formatted-date-time value={file.CreatedDate}></lightning-formatted-date-time> -->
+                                <lightning-formatted-date-time value={file.CreatedDate} year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                        minute="2-digit" time-zone="PST" time-zone-name="short" hour12=true></lightning-formatted-date-time>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-p-around_small slds-truncate" title="">
+                                <lightning-button-icon icon-name='utility:preview' alternative-text='preview'
+                                                       variant='error' size='x-small' title='delete' onclick={filePreview}
+                                                       value={file.ContentDocumentId}></lightning-button-icon>
+                            </div>
+                        </td>
+                        
                         <td>
                             <div class="slds-p-around_small slds-truncate" title="">
                                 <lightning-button-icon class="icon-class-delete" icon-name='utility:delete' alternative-text='delete'
@@ -171,11 +192,19 @@
                     <td colspan="2">
                         <span class="slds-text-body_regular">
                             Document Upload
-                            (Please check all that are included)
+                            <!-- (Please check all that are included) -->
                         </span>
-                        <div class="slds-p-around_small slds-truncate" title="">
+                        <div class="slds-p-around_small " title="">
                             <div class="slds-form-element">
-                                <div class="slds-form-element__control">
+
+                                <!-- <div class="slds-p-horizontal_small slds-truncate">  -->
+                                    <c-orthofix-generic-multi-select-pick-list multi-select="true" onselectoption={handleSelectOptionList} options={picklistOptions.doctype} selected-values={selectedDocumentTypes} label="Document Type"></c-orthofix-generic-multi-select-pick-list>
+                                <!-- </div> -->
+                                
+                                
+
+
+                                <!-- <div class="slds-form-element__control">
                                     <div class="slds-float_left slds-p-top_small slds-p-right_small">
                                         <lightning-input class="" type="checkbox" name="docType"
                                                          label="Patient Demographics" onchange={docTypeChange}
@@ -193,9 +222,9 @@
                                     </div>
                                     
                                     <div class="slds-clear"></div>
-                                </div>
+                                </div> -->
 
-                                <div class="slds-form-element__control">
+                                <!-- <div class="slds-form-element__control">
                                     <div class="slds-float_left slds-p-top_small slds-p-right_small">
                                         <lightning-input name="Prescription" class="" type="checkbox"
                                                          label="Prescription"
@@ -222,19 +251,26 @@
                                                          onchange={docTypeChange}
                                                          disabled={disableCheckeboxes}></lightning-input>
                                     </div>
-                                </div>
+                                </div> -->
+
+                                
 
                                 <div class="slds-form-element__control">
+                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                    <template if:true={showOtherMultiSelect}>
+                                        <c-orthofix-generic-multi-select-pick-list multi-select="true" onselectoption={handleSelectOtherOptionList} options={picklistOptions.otherdoctype} selected-values={selectedDocumentOtherTypes} label="Other Document Type"></c-orthofix-generic-multi-select-pick-list>
+                                    </template>
+                                </div>
                                     <!-- <div class="slds-float_left slds-p-top_small slds-p-right_small">
                                         <lightning-input class="" type="checkbox" label="CMN"  onchange={docTypeChange}></lightning-input>
                                     </div> -->
-                                    <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                    <!-- <div class="slds-float_left slds-p-top_small slds-p-right_small">
                                         <lightning-input class="" type="checkbox" label="LOMN" onchange={docTypeChange}
                                                          disabled={disableCheckeboxes}></lightning-input>
-                                    </div>
+                                    </div> -->
                                 </div>
 
-                                <div class="slds-form-element__control">
+                                <!-- <div class="slds-form-element__control">
                                     <div class="slds-float_left slds-p-top_small slds-p-right_small">
                                         <lightning-input class="" type="checkbox" label="Other" onchange={docTypeChange}
                                                          disabled={disableCheckeboxes}></lightning-input>
@@ -252,7 +288,7 @@
                                             ></lightning-input>
                                         </div>
                                     </template>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
 

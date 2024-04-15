@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Lokesh Kesava | lokesh.kesava@argano.com
  * @group             :
- * @last modified on  : 04-02-2024
+ * @last modified on  : 04-12-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
  **/
 import {api, track, LightningElement, wire} from 'lwc';
@@ -84,6 +84,10 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
    
 
     connectedCallback() {
+
+        
+
+
         this.getPicklistOptions();
         console.log('this.recordId', this.recordId);
         if (this.recordId) {
@@ -122,7 +126,9 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
         fractureside: [],
         fracturesite: [],
         previoustreatment: [],
-        assignment:[]
+        assignment:[],
+        doctype:[],
+        otherdoctype:[]
 
     };
 
@@ -302,7 +308,7 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
                     }
                 }
 
-                if(orderData.Status === "Submitted To IA" && this.orderOktoFitCheck){
+                if(orderData.Status != "Started" && this.orderOktoFitCheck){
                     this.showSchAppitmentAndFittingTab = true
                 }else this.showSchAppitmentAndFittingTab = false
 
@@ -1379,6 +1385,10 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
                 this.picklistOptions.startinglevel = result.startinglevel;
                 this.picklistOptions.endinglevel = result.endinglevel;
                 this.picklistOptions.assignment = result.assignment;
+                this.picklistOptions.doctype = result.doctype;
+                this.picklistOptions.otherdoctype = result.otherdoctype;
+
+                
 
                 if(this.picklistOptions.territoryManagers.length > 0){
                     console.log('inside condition');
@@ -1477,5 +1487,15 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
 }
 
 
+// function setObserver(el) {
+//   const observer = new IntersectionObserver(
+//     ([e]) => {e.target.classList.toggle("is-pinned", e.intersectionRatio < 1)},
+//     {
+//       threshold: [1],
+//     }
+//   );
+//   observer.observe(el);
+// }
 
-
+// const orderFormTitle = document.querySelector(".comm-content-header");
+// setObserver(orderFormTitle);
