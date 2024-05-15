@@ -2,7 +2,7 @@
   @description       : 
   @author            : Lokesh Kesava | lokesh.kesava@argano.com
   @group             : 
-  @last modified on  : 03-07-2024
+  @last modified on  : 05-02-2024
   @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 -->
 <template>
@@ -49,9 +49,9 @@
     </div>
        
 
-        <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
-            <div class="slds-p-around_x-small slds-m-right_large">
-                <lightning-input-address
+        <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large"> -->
+                <!-- <lightning-input-address
                         name="eventInformation"
                         address-label="Address"
                         street-label="Street"
@@ -64,7 +64,73 @@
                         show-address-lookup
                         disabled={makeEventReadOnly}>
                        
-                </lightning-input-address>
+                </lightning-input-address> -->
+            <!-- </div> -->
+        <!-- </div> -->
+        <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                        name="eventInformation.street"
+                        label="Address 1"
+                        value=''
+                        onchange={handleInputChange}
+                        disabled={makeEventReadOnly}
+                       
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-medium-size_9-of-12 slds-large-size_9-of-12"></div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                        name="eventInformation.address2"
+                        label="Address 2"
+                        value=''
+                        onchange={handleInputChange}
+                        disabled={makeEventReadOnly}
+                       
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                        name="eventInformation.city"
+                        data-name="eventInformation.city"
+                        label="City"
+                        value=''
+                        onchange={handleInputChange}
+                        disabled={makeEventReadOnly}
+                        
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-medium-size_9-of-12 slds-large-size_9-of-12"></div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                        name="eventInformation.province"
+                        data-name="eventInformation.province"
+                        label="State"
+                        value=''
+                        onchange={handleInputChange}
+                        disabled={makeEventReadOnly}
+                        
+                ></lightning-input>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="text"
+                        name="eventInformation.postalCode"
+                        data-name="eventInformation.postalCode"
+                        label="Postal Code"
+                        value=''
+                        onchange={handleInputChange}
+                        disabled={makeEventReadOnly}
+                        
+                ></lightning-input>
             </div>
         </div>
         <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_5-of-12">

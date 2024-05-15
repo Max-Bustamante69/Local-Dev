@@ -2,14 +2,14 @@
  * @description       :
  * @author            : Lokesh Kesava | lokesh.kesava@argano.com
  * @group             :
- * @last modified on  : 04-12-2024
+ * @last modified on  : 05-06-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
  **/
 import {api, track, LightningElement, wire} from 'lwc';
 import LightningConfirm from 'lightning/confirm';
 import getPicklistValues from "@salesforce/apex/OrthoFixOrderFormController.getPicklistValues";
 import getOrder from "@salesforce/apex/OrderController.getOrder";
-// import getCurrentUserPermissions from "@salesforce/apex/OrderController.getCurrentUserPermissions";
+import hasBGTOrderEntryPermissionSet from '@salesforce/apex/OrderController.hasBGTOrderEntryPermissionSet';
 import getCurrentUser from "@salesforce/apex/OrderController.getCurrentUser";
 import saveOrder from "@salesforce/apex/OrderController.saveOrder";
 import { refreshApex } from '@salesforce/apex';
@@ -18,17 +18,21 @@ import isFavoriteInsurance from "@salesforce/apex/OrderController.isFavoriteInsu
 import createEvent from "@salesforce/apex/OrderController.createEvent";
 import submitAndSave from "@salesforce/apex/OrderController.submitAndSave";
 import saveInsurance from "@salesforce/apex/OrderController.saveInsurance";
+import hasFiles from "@salesforce/apex/FileUploaderController.hasFiles";
 import saveClinicalInformation from "@salesforce/apex/OrderController.saveClinicalInformation";
 import {showSuccess, showError, showReduceErrors, showLoader, hideLoader} from 'c/orthofixNotificationUtility';
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 import {NavigationMixin} from 'lightning/navigation';
 import Orthofix_checkmarkicon from "@salesforce/resourceUrl/Orthofix_checkmarkicon";
-
+import getRecordTypes from '@salesforce/apex/RecordTypesController.getRecordTypes';
+const OBJECT_API_NAME = 'Address__c'; 
+const PHONENUMBER_OBJECT_API_NAME = 'PhoneNumber__c'; 
 
 export default class OrthofixOrderForm extends NavigationMixin(LightningElement) {
 
 
     @api recordId;
+    @api isCommunity = false;
     @track booleanOrderStatus = false;
     @track lastTimeCheckFavoriteRequested = 0;
     @track showAddFavoriteButton = false;
@@ -45,7 +49,7 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
     showSaveAndSubmit = false;
     makeEventReadOnly = false;
     @track iconClass;
-    orderStatus;
+    @track orderStatus;
     orderOktoFitCheck = false;
     showSchAppitmentAndFittingTab = false;
     @track prescriptionChecked;
@@ -56,9 +60,59 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
     @track hideAllButtons = true;
     @track orderCanceled = false;
     @track currentUserPermissions;
-    @track isFileExist = false;
+    @track doesFileExist;
+    @track  hasOrderEntryPermissionSet = false;
+    @track recordTypes;
+    @track phoneRecordTypes;
+    @track recordTypeOptions;
+    @track phonerecordTypeOptions;
+    @track addressContactRecordType='';
+    @track phoneContactRecordType='';
+
     
-    
+    @wire(getRecordTypes, { objectApiName: OBJECT_API_NAME })
+    wiredRecordTypes({ error, data }) {
+        if (data) {
+            let  contactAddressRecTypeValue;
+            this.recordTypes = data;
+            this.recordTypeOptions = this.generateOptions();
+           console.log('this.recordTypeOptions' , JSON.stringify(this.recordTypeOptions));
+           let recordTypeOptions = this.recordTypeOptions;
+           recordTypeOptions.forEach(option => {
+            if (option.recordTypeName === "Contact Address") {
+                contactAddressRecTypeValue = option.value;
+            }
+            console.log('contactAddressRecTypeValue Value:', contactAddressRecTypeValue); 
+            this.addressContactRecordType = contactAddressRecTypeValue;
+        });
+
+        } else if (error) {
+            console.error(`Error fetching record types for ${OBJECT_API_NAME}:`, error);
+        }
+    }
+
+    @wire(getRecordTypes, { objectApiName: PHONENUMBER_OBJECT_API_NAME })
+    wiredPhoneNumberRecordTypes({ error, data }) {
+        if (data) {
+            console.log('data phone', data);
+            let  contactPhoneRecTypeValue;
+            this.phoneRecordTypes = data;
+            this.phonerecordTypeOptions = this.generatePhoneOptions();
+           let recordTypeOptions = this.phonerecordTypeOptions;
+           recordTypeOptions.forEach(option => {
+            if (option.recordTypeDeveloperName === "ContactPhoneNumber") {
+                contactPhoneRecTypeValue = option.value;
+            }
+            console.log('contactPhoneRecTypeValue Value:', contactPhoneRecTypeValue); 
+            this.phoneContactRecordType = contactPhoneRecTypeValue;
+        });
+
+        } else if (error) {
+            console.error(`Error fetching record types for ${PHONENUMBER_OBJECT_API_NAME}:`, error);
+        }
+    }
+
+
 
     @wire(getCurrentUser)
     wiredUser({ error, data }) {
@@ -71,29 +125,58 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
         }
     }
 
-    // @wire(getCurrentUserPermissions)
-    // wiredUserPermissions({ error, data }) {
-    //     if (data) {
-    //         this.currentUserPermissions = data;
-    //         console.log(' this.currentUserPermissions',  this.currentUserPermissions);
-    //     } else if (error) {
-    //         this.error = error;
-    //     }
-    // }
+    @wire(hasBGTOrderEntryPermissionSet)
+    wiredPermissionSet({ error, data }) {
+        let checkOrderEntryPS = false;
+        if (data) {
+            console.log('data', data);
+            
+            checkOrderEntryPS = data;
+            
+        } else if (error) {
+            this.error = error;
+            console.error(error);
+        }
+        
+        this.hasOrderEntryPermissionSet = checkOrderEntryPS;
+        console.log('this.hasOrderEntryPermissionSet', this.hasOrderEntryPermissionSet);
+    }
 
-   
+      generateOptions() {
+        return this.recordTypes.map(rt => ({
+            label: `${rt.name}`,
+            value: rt.recordTypeId,
+            recordTypeName: rt.name,
+            recordTypeDeveloperName: rt.developerName
+        }));
+
+    }
+
+    generatePhoneOptions() {
+        return this.phoneRecordTypes.map(rt => ({
+            label: `${rt.name}`,
+            value: rt.recordTypeId,
+            recordTypeName: rt.name,
+            recordTypeDeveloperName: rt.developerName
+        }));
+
+    }
+
+    
 
     connectedCallback() {
-
-        
-
-
+        this.checkFiles();
         this.getPicklistOptions();
         console.log('this.recordId', this.recordId);
         if (this.recordId) {
             this.getOrder();
         }
         this.handleTabsValidation();
+
+        const orderFormTitle = document.querySelector(".comm-content-header");
+        setObserver(orderFormTitle);
+
+
     }
 
     
@@ -180,13 +263,14 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
             lastName: true,
             gender: true,
             birthDate: true,
-            address2: false,
+            address2: true,
             phone: true,
             street: true,
             city: true,
             province: true,
             postalCode: true,
-            country: false,
+            county: true,
+            country: true,
             phonetype: true,
             emergencyContact: {
                 name: false,
@@ -257,6 +341,22 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
         dateOfPrescription: true
     };
 
+
+    checkFiles() {
+        console.log('this.recordId' , this.recordId);
+        hasFiles({ orderId: this.recordId })
+            .then(result => {
+                this.doesFileExist = result;
+                console.log('doesFileExist after result', this.doesFileExist);
+                
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.doesFileExist = undefined;
+            });
+            return this.doesFileExist;
+    }
+
     getOrder() {
         console.log('recordId', this.recordId);
         showLoader(this);
@@ -268,13 +368,21 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
                 this.oktofitIcon = orderData.Oracle_OkToFit_Icon;
                 console.log('orderOktoFitCheck' ,orderData.oracleOkToFit);
                 this.orderOktoFitCheck = orderData.oracleOkToFit;
-                this.headerText = this.headerText + orderData.patientInformation.productType +'™' +' '+' - '+ ' ' + orderData.patientInformation.firstName + '  ' + orderData.patientInformation.lastName;
+                this.headerText = this.headerText + (orderData.patientInformation.productType || '') +'™' +' '+' - '+ ' '
+                    + (orderData.patientInformation.firstName || '') + '  ' + orderData.patientInformation.lastName;
                 this.orderStatus = orderData.Status;
+                console.log('Order addressess', orderData.physicianaddressId);
+                console.log(' this.orderStatus',  this.orderStatus);
                 if (orderData.Status === "Submitted To Orthofix") {
                     this.hideSaveButtons = true;
                 }
-                
-                if (orderData.Status === "Submitted To IA") {
+               
+                const statusesToDisable = ["Submitted To IA", "Authorization in Progress", "AOB Submitted", 
+                                            "Denied", "More Info Needed", "Appeal in Progress", 
+                                            "Claim Submitted", "Appeal Docs needed", "Appeal Denied", "Complete (no action needed)"];
+                console.log('orderData.Status', orderData.Status);
+                if (statusesToDisable.includes(orderData.Status)) {
+                    console.log('inside log >>2')
                     this.showheader = false;
                     this.disableForm = true;
                     this.clinicalDisableForm = true;
@@ -307,6 +415,8 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
                         this.isRequired = false;
                     }
                 }
+
+                
 
                 if(orderData.Status != "Started" && this.orderOktoFitCheck){
                     this.showSchAppitmentAndFittingTab = true
@@ -383,6 +493,11 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
             });
     }
 
+    get shouldShowCancelButton() {
+        const allowedStatuses = ['Started', 'Submitted To IA', 'Authorization in Progress'];
+        return allowedStatuses.includes(this.orderStatus);
+    }
+
     adjustMultiPicklist(picklists) {
 
 
@@ -447,26 +562,36 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
     }
 
     handleSubmitToIA() {
+        let resultcheckfile = this.checkFiles();
+        console.log('resultcheckfile', resultcheckfile);
         console.log('this.prescriptionChecked', this.prescriptionChecked);
-        console.log('this.isFileExist', this.isFileExist);
-        if (!this.prescriptionChecked && !this.checkUserRoleFitter && !this.isFileExist) {
-            showError(this, 'Validation Error', 'Please upload a Prescription before submitting the Order.');
-            return; 
-        }
-        this.handleTabsValidation();
-        this.showheader = false;
-        this.booleanOrderStatus = false;
-        if (this.patientIcon === "utility:success" && this.insuranceIcon === "utility:success" && this.clinicalIcon === "utility:success") {
-            this.booleanOrderStatus = true;
-            this.save(true);
-            console.log('this.disableForm', this.disableForm);
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 10000);
-        } else {
-            showError(this, 'Validation Error', 'Please fill in all required fields before submitting the order');
-            return;
-        }
+        console.log('this.checkUserRoleFitter',  this.checkUserRoleFitter);
+        console.log('this.doesFileExist', this.doesFileExist);
+           
+            if(!this.hasOrderEntryPermissionSet){
+                if (!this.prescriptionChecked  || !this.doesFileExist ) {
+                    showError(this, 'Validation Error', 'Please upload a Prescription before submitting the Order.');
+                    return;
+                }
+            }
+            
+                this.handleTabsValidation();
+                this.showheader = false;
+                this.booleanOrderStatus = false;
+                if (this.patientIcon === "utility:success" && this.insuranceIcon === "utility:success" && this.clinicalIcon === "utility:success") {
+                this.booleanOrderStatus = true;
+                this.save(true);
+                console.log('this.disableForm', this.disableForm);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 10000);
+            } else {
+                showError(this, 'Validation Error', 'Please fill in all required fields before submitting the order');
+                return;
+                }
+            
+        
+        
     }
 
     handlePrescriptionCheck(event){
@@ -474,10 +599,10 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
         console.log('inside preciption checked or no', this.prescriptionChecked);
     }
 
-    handleFilesCheck(event){
-        this.isFileExist = event.detail;
-        console.log('inside preciption checked or no', this.isFileExist);
-    }
+    // handleFilesCheck(event){
+    //     this.doesFileExist = event.detail;
+    //     console.log('inside file exist t/f', this.doesFileExist);
+    // }
 
 
 
@@ -494,6 +619,8 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
 
             let prescriber = this.validateItem(this.requiredFields.patientInformation.prescriber, this.editedData.patientInformation, 'prescriber');
             missedFields = [...missedFields, ...prescriber];
+            console.log('missedFields', missedFields.length);
+            console.log('missedFields', JSON.stringify(missedFields));
             if (missedFields.length > 0) {
                 unfulfilledTab = "patientTab";
             }
@@ -600,7 +727,7 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
                 status: this.booleanOrderStatus === true ? "Submitted To IA" : "",
                 patientInformation: this.editedData.patientInformation,
             };
-
+            
             console.log('Saved patientInformation', JSON.stringify(patientInformation));
             console.log('save insurance info:' + JSON.stringify(this.getInsuranceSaveData()));
             let isCreate = !patientInformation.id;
@@ -624,7 +751,7 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
                                 this.isNavigate=true;
                                 console.log('Insurance Navigation check2:'+ this.isNavigate);
                                 console.log('Inside insurance:' + result);
-                                
+                                this.getOrder();
                                 
                             })
                             .catch((error) => {
@@ -779,9 +906,7 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
         if (editedData.eventInformation.province) {
             locationString += `${editedData.eventInformation.province}, `;
         }
-        if (editedData.eventInformation.country) {
-            locationString += `${editedData.eventInformation.country}, `;
-        }
+        locationString += `United States`;
         if (editedData.eventInformation.postalCode) {
             locationString += `${editedData.eventInformation.postalCode}`;
         }
@@ -789,8 +914,8 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
             WhatId: editedData.id,
             StartDateTime: startDateTime,
             Location: locationString,
-            // Location: `${editedData.eventInformation.street}, ${editedData.eventInformation.city}, ${editedData.eventInformation.province}, ${editedData.eventInformation.country}, ${editedData.eventInformation.postalCode}`,
             Description: editedData.eventInformation.notes,
+            address2:editedData.eventInformation.address2
         };
         }else {
             showError(this, 'Validation Error', 'Please enter appointment date and time to submit');
@@ -1029,7 +1154,7 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
                 if (typeof this.formData.patientInformation.firstName === 'undefined' && typeof this.formData.patientInformation.lastName === 'undefined') {
                     console.log('come here it is undefined   ');
 
-                    this.headerText = `Create Order: ${this.productType}™`;
+                    this.headerText = `Create Order: ${this.productType || ''}™`;
                     // this.headerText = 'Create Order: ' + changedItem.productType+'TM';
                 } else {
                     console.log('come here it in undefined   ');
@@ -1042,21 +1167,31 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
             }
             if (fieldName === "firstName") {
                 this.firstName = changedItem['firstName'];
+                console.log('this.formData.patientInformation.lastName' , this.formData.patientInformation.firstName);
                 if (this.formData.patientInformation.lastName === 'undefined') {
-                    this.headerText = `Create Order: ${this.productType}™` + ' - ' + this.firstName;
+                    console.log('log 1');
+                    this.headerText = `Create Order: ${this.productType || ''}™` + ' - ' + this.firstName;
                 } else {
-                    this.headerText = `Create Order: ${this.productType}™` + ' - ' + this.firstName;
+                    console.log('log 2');
+                    this.headerText = `Create Order: ${this.productType || ''}™` + ' - ' + this.firstName;
                     //+ ' ' + this.formData.patientInformation.lastName;
                 }
             }
             if (fieldName === "lastName") {
                 this.lastName = changedItem['lastName']
+                console.log('this.formData.patientInformation.firstName' , this.formData.patientInformation.firstName);
                 if (this.formData.patientInformation.firstName === 'undefined') {
-                    this.headerText = `Create Order: ${this.productType}™` + ' - ' + this.lastName;
+                    console.log('log 3');
+                    this.headerText = `Create Order: ${this.productType || ''}™` + ' - ' + this.lastName;
                 } else {
-                    this.headerText = `Create Order: ${this.productType}™` + ' - ' + this.firstName + ' ' + this.lastName;
+                    console.log('log 4');
+                    this.headerText = `Create Order: ${this.productType || ''}™` + ' - ' + (this.firstName || '') + ' ' + this.lastName;
                 }
             }
+
+           
+
+            
             
             //type 
             if (fieldName === 'insuranceType' && detail.value === 'Self-Pay') {
@@ -1403,6 +1538,16 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
     validationCheck() {
         let validation = false;
 
+        let date1 = JSON.stringify(new Date());
+            date1 = date1.slice(1, 11);
+            console.log('current date:' + date1);
+        
+        if(this.editedData.patientInformation && this.editedData.patientInformation.birthDate > date1){
+            showError(this, 'Validation Error', 'Birth Date should not be greater than today');
+            validation = true;
+        }
+        
+
         if (this.editedData.hasOwnProperty('primary')) {
             let carrierPhone = this.editedData.primary.carrier.phone;
             let SSN = this.editedData.primary.insured.socialSecurityNumber;
@@ -1487,15 +1632,15 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
 }
 
 
-// function setObserver(el) {
-//   const observer = new IntersectionObserver(
-//     ([e]) => {e.target.classList.toggle("is-pinned", e.intersectionRatio < 1)},
-//     {
-//       threshold: [1],
-//     }
-//   );
-//   observer.observe(el);
-// }
-
-// const orderFormTitle = document.querySelector(".comm-content-header");
-// setObserver(orderFormTitle);
+function setObserver(el) {
+  if (el) {
+    const observer = new IntersectionObserver(
+      ([e]) => {
+        e.target.classList.toggle("is-pinned", e.intersectionRatio < 1)
+        
+      },
+      { threshold: [1] }
+    );
+    observer.observe(el);
+  }
+}

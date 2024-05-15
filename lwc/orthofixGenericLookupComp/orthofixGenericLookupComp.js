@@ -1,3 +1,11 @@
+/**
+ * @description       : Genric lookup component used for account, contact, zupcode and asset object in lwc components
+ * @author            : lokesh.kesava@argano.com
+ * @group             : 
+ * @last modified on  : 05-06-2024
+ * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+**/
+
 import { LightningElement, api } from 'lwc';
 import fetchRecords from '@salesforce/apex/orthofixLookupLwcController.fetchRecords';
 const DELAY = 300;
@@ -17,6 +25,8 @@ export default class OrthofixGenericLookupComp extends LightningElement {
     @api otherFieldApiName = "Industry";
     @api searchString = "";
     @api selectedRecordId = "";
+    @api recordTypeId="";
+    @api disabledInput;
     @api selectedShippingStreet;
     @api selectedShippingCity;
     @api selectedShippingState;
@@ -25,8 +35,14 @@ export default class OrthofixGenericLookupComp extends LightningElement {
     @api selectedPhone;      
     @api parentRecordId;
     @api parentFieldApiName;
-
+    @api selectedCity;
+    @api selectedCounty;
+    @api selectedCountry;
+    @api selectedStateCode;
+    @api selectedOracleId;
+    @api selectedAddress2;
     preventClosingOfSerachPanel = false;
+    @api physicianContact;
 
     get methodInput() {
         return {
@@ -35,8 +51,10 @@ export default class OrthofixGenericLookupComp extends LightningElement {
             otherFieldApiName: this.otherFieldApiName,
             searchString: this.searchString,
             selectedRecordId: this.selectedRecordId,
+            recordTypeId : this.recordTypeId,
             parentRecordId: this.parentRecordId,
-            parentFieldApiName: this.parentFieldApiName
+            parentFieldApiName: this.parentFieldApiName,
+            physicianContact: this.physicianContact
         };
     }
 
@@ -49,6 +67,7 @@ export default class OrthofixGenericLookupComp extends LightningElement {
 
     //getting the default selected record
     connectedCallback() {
+        console.log('this.selectedRecordId', this.selectedRecordId);
         if (this.selectedRecordId) {
             this.fetchSobjectRecords(true);
         }
@@ -59,6 +78,7 @@ export default class OrthofixGenericLookupComp extends LightningElement {
         fetchRecords({
             inputWrapper: this.methodInput
         }).then(result => {
+            console.log('result', JSON.stringify(result));
             if (loadEvent && result) {
                 console.log('log 1');
                 this.selectedRecordName = result[0].mainField;
@@ -68,11 +88,19 @@ export default class OrthofixGenericLookupComp extends LightningElement {
                 this.selectedShippingPostalCode = result[0].shippingPostalCode;
                 this.selectedShippingCountry = result[0].shippingCountry;
                 this.selectedPhone = result[0].phone;
+                this.selectedCity = result[0].city;
+                this.selectedCounty = result[0].county;
+                this.selectedStateCode = result[0].statecode;
+                this.selectedCountry = result[0].country;
+                this.selectedOracleId = result[0].oracleId;
+                this.selectedAddress2 = result[0].address2;
             } else if (result) {
+                console.log('log 2 result', JSON.stringify(result));
                 console.log('log 2');
                 this.recordsList = JSON.parse(JSON.stringify(result));
                 console.log('this.recordsList>>',this.recordsList);
             } else {
+                console.log('log 3 result', JSON.stringify(result));
                 console.log('log 3');
                 this.recordsList = [];
             }
@@ -106,6 +134,14 @@ export default class OrthofixGenericLookupComp extends LightningElement {
     handleCommit() {
         this.selectedRecordId = "";
         this.selectedRecordName = "";
+        if(this.objectApiName == 'Asset' && this.selectedRecordId == ""){
+            console.log('selectedRecordId>>> ', this.selectedRecordId);
+            console.log('objectApiName>>> ', this.objectApiName);
+            const unselectEvent = new CustomEvent('unselectevent', {
+                detail: this.selectedRecordId
+            });
+            this.dispatchEvent(unselectEvent);
+        }
     }
 
     //handler for selection of records from lookup result list
@@ -122,7 +158,48 @@ export default class OrthofixGenericLookupComp extends LightningElement {
         });
         //dispatching the custom event
         this.dispatchEvent(selectedEvent);
-        }else{
+        }else if(this.objectApiName === 'ZipCode__c'){
+            console.log('inside Zip code value');
+            var objId = event.currentTarget.dataset.id; 
+            this.selectedRecord = this.recordsList.find(data => data.id === objId);
+            this.selectedRecordId =  this.selectedRecord.id;
+            this.selectedRecordName =  this.selectedRecord.mainField;
+            this.recordsList = [];
+        // Creates the event
+        const selectedEvent = new CustomEvent('valueselected', {
+            detail: this.selectedRecord
+        });
+        //dispatching the custom event
+        this.dispatchEvent(selectedEvent);
+        }else if(this.objectApiName === 'Address__c'){
+            console.log('inside Address value');
+            var objId = event.currentTarget.dataset.id; 
+            this.selectedRecord = this.recordsList.find(data => data.id === objId);
+            this.selectedRecordId =  this.selectedRecord.id;
+            this.selectedRecordName =  this.selectedRecord.mainField;
+            this.recordsList = [];
+        // Creates the event
+        const selectedEvent = new CustomEvent('valueselected', {
+            detail: this.selectedRecord
+        });
+        //dispatching the custom event
+        this.dispatchEvent(selectedEvent);
+        }
+        else if(this.objectApiName === 'PhoneNumber__c'){
+            console.log('inside phonenumber value');
+            var objId = event.currentTarget.dataset.id; 
+            this.selectedRecord = this.recordsList.find(data => data.id === objId);
+            this.selectedRecordId =  this.selectedRecord.id;
+            this.selectedRecordName =  this.selectedRecord.mainField;
+            this.recordsList = [];
+        // Creates the event
+        const selectedEvent = new CustomEvent('valueselected', {
+            detail: this.selectedRecord
+        });
+        //dispatching the custom event
+        this.dispatchEvent(selectedEvent);
+        }
+        else{
             console.log('inside other object');
             let selectedRecord = {
                 mainField: event.currentTarget.dataset.mainfield,
@@ -155,6 +232,14 @@ export default class OrthofixGenericLookupComp extends LightningElement {
             }
             this.preventClosingOfSerachPanel = false;
         }, DELAY);
+    }
+
+    renderedCallback() {
+       
+        console.log('rendered recordid>>', this.selectedRecordId);
+        if (this.selectedRecordId) {
+            this.fetchSobjectRecords(true);
+        }
     }
 
 }

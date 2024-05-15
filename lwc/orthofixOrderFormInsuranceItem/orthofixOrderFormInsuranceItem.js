@@ -2,6 +2,7 @@ import {api, track, LightningElement} from 'lwc';
 import orthofix_navigatetocontactlistview from '@salesforce/label/c.orthofix_navigatetoaccountlistview';
 import checkFavInsurance from "@salesforce/apex/OrderController.checkFavoriteInsurance";
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
+import {showSuccess, showError, showReduceErrors, showLoader, hideLoader} from 'c/orthofixNotificationUtility';
 export default class OrthofixOrderFormInsuranceItem extends LightningElement {
 
     @api formData;
@@ -86,6 +87,7 @@ export default class OrthofixOrderFormInsuranceItem extends LightningElement {
                         }));
                     this.showAddFavoriteInsuranceButton = false;
                     console.log('hide button:'+this.showAddFavoriteButton);
+                    showSuccess(this, 'Added as Favorite', 'Note : Favorite will be saved upon order save');
                 }
             })
             .catch((error) => {

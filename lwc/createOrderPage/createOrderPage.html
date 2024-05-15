@@ -19,7 +19,29 @@
             </h2>
         </header>
         <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
-           <lightning-accordion allow-multiple-sections-open="true" active-section-name={activeSectionNames}>
+            <lightning-layout multiple-rows="true">
+                <lightning-layout-item size="12">
+                    <lightning-combobox
+                            name="salesRep"
+                            label="Sales Rep"
+                            placeholder="Select Sales Rep"
+                            options={territoryManagerPicklistOptions}>
+                    </lightning-combobox>
+                    <lightning-combobox
+                            name="shippingAddress"
+                            label="Shipping Address"
+                            placeholder="Select Shipping Address"
+                            options={shippingAddresses}>
+                    </lightning-combobox>
+                    <lightning-combobox
+                            name="shippingMethod"
+                            label="Shipping Method"
+                            placeholder="Select Shipping Method"
+                            options={shippingMethods}>
+                    </lightning-combobox>
+                </lightning-layout-item>
+            </lightning-layout>
+           <!--lightning-accordion allow-multiple-sections-open="true" active-section-name={activeSectionNames}>
                 <lightning-record-edit-form object-api-name={objectName}
                                             onload={handleLoad} 
                                             record-type-id={selectedRecordType}
@@ -54,7 +76,7 @@
                         </template> 
                      
                 </lightning-record-edit-form>
-            </lightning-accordion> 
+            </lightning-accordion-->
         
             <footer class="slds-card__footer">
                 <div class="slds-align_absolute-center">  

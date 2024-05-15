@@ -3,6 +3,8 @@ import { showLoader, hideLoader } from 'c/orthofixNotificationUtility';
 import getFiles from "@salesforce/apex/FileUploaderController.getFiles";
 
 
+const test = document.querySelector('.test-scm')
+
 export default class OrthofixOrderFormDocumentsItem extends LightningElement {
 
     @api formData;
@@ -28,6 +30,7 @@ export default class OrthofixOrderFormDocumentsItem extends LightningElement {
             showLoader(this);
             this.orderFiles = await getFiles({ recordId: this.myRecordId });
             console.log(JSON.stringify(this.orderFiles));
+            
         } catch (error) {
             console.error('Error in loadFiles for OrthofixOrderFormDocumentsItem', error);
         }

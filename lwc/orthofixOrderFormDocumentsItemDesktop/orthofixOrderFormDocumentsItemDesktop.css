@@ -45,3 +45,48 @@
 .sm-buttons-container{
     display: flex;
 }
+
+
+thead tr{
+    display: flex; 
+    flex-direction: column; 
+
+}
+
+
+tbody tr{
+    display: flex; 
+    flex-direction: column; 
+    
+}
+
+
+
+.flex{
+    display: flex;
+}
+
+
+
+  @media (min-width: 768px) {
+
+
+    tbody{
+          flex: none; 
+    }
+
+    tbody tr{
+        display: table-row; 
+        margin-bottom: 0; 
+    }
+
+    thead tr{
+        display: table-row; 
+        margin-bottom: 0; 
+        border-radius: 0; 
+    }
+
+    thead tr:not(:first-child) {
+      display: none;
+    }
+  }

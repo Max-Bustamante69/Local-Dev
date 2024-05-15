@@ -1,10 +1,15 @@
 import { LightningElement, track, wire, api} from 'lwc';
+import LightningConfirm from 'lightning/confirm';
 import getPicklistValues from "@salesforce/apex/OrthoFixOrderFormController.getPicklistValues";
 import orthofix_navigatetowholesalelistview from '@salesforce/label/c.orthofix_navigatetowholesalelistview';
 import orthofix_navigatetocontactlistview from '@salesforce/label/c.orthofix_navigatetocontactlistview';
 import orthofix_navigatetoNPIRegistry from '@salesforce/label/c.orthofix_navigatetoNPIRegistry';
 import uploadFile from "@salesforce/apex/FileUploaderController.uploadFile";
+import createContentLink from "@salesforce/apex/FileUploaderController.createContentLink";
 import getFiles from "@salesforce/apex/FileUploaderController.getFiles";
+import isFavorite from "@salesforce/apex/OrthofixWholesaleOrderController.isFavorite";
+import isPhysicianFavorite from "@salesforce/apex/OrthofixWholesaleOrderController.isPhysicianFavorite";
+import getAccountWholesaleecordValue from "@salesforce/apex/OrthofixWholesaleOrderController.getAccountWholesaleecordType";
 import {showSuccess, showError, showReduceErrors, showLoader, hideLoader} from 'c/orthofixNotificationUtility';
 import getCurrentUser from "@salesforce/apex/OrthofixWholesaleOrderController.getCurrentUser";
 import saveOrder from "@salesforce/apex/OrthofixWholesaleOrderController.saveOrder";
@@ -14,11 +19,13 @@ import {NavigationMixin} from 'lightning/navigation';
 
 
 export default class OrthofixWholeSaleOrderForm extends NavigationMixin(LightningElement) {
-
+    @track selectedWholesaleAccountId;
     @api selectedRecordType;
     @api selectedRecordTypeName;
+    @track lastTimeCheckFavoriteRequested = 0;
     @api recordId;
-    @api showAddFavoriteButton = false;
+    @track showAddFavoriteButton = false;
+    @track showAddPhysicianFavoriteButton = false;
     @track booleanOrderStatus = false;
     @track isShowFileUploadModal = false;
     @track
@@ -30,6 +37,7 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
 
         }
     };
+    @track wholesaleAccountRecordtypeId = '';
 
     @wire(getCurrentUser)
     wiredUser({ error, data }) {
@@ -47,6 +55,7 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
     navigateToWholeSaleListview;
     showPhysicianLookup = true;
     showShippingMethod = false;
+    @track orderStatus = '';
 
     @track editedData = {};
 
@@ -72,28 +81,40 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
         this.navigateToWholeSaleListview = this.sfdcbaseUrl + this.label.navigatetoWholesalelistview;
         this.navigateToPhysicianListview = this.sfdcbaseUrl + this.label.navigatetocontactlistview;
         this.getPicklistOptions();
+        this.getAccountWholeSaleRecordtype();
         console.log('this.recordId', this.recordId);
         if (this.recordId) {
             this.getOrder();
         }
+
+
     }
 
-    get favPhysicain(){
-        if(this.formData.wholeSaleInformation.Physician.firstName && this.formData.wholeSaleInformation.Physician.lastName){
-            return this.formData.wholeSaleInformation.Physician.firstName + ' ' +  this.formData.wholeSaleInformation.Physician.lastName;
-        }else null;
+    // get favPhysicain(){
+    //     if(this.formData.wholeSaleInformation.Physician.firstName && this.formData.wholeSaleInformation.Physician.lastName){
+    //         return this.formData.wholeSaleInformation.Physician.firstName + ' ' +  this.formData.wholeSaleInformation.Physician.lastName;
+    //     }else null;
        
-    }
+    // }
 
     handleAddToFavoritesClick(){
         this.formData.wholeSaleInformation.account.makeFavorite = true;
+
         this.showAddFavoriteButton = false;
+        showSuccess(this, 'Added as Favorite', 'Note : Favorite will be saved upon order save');
+    }
+
+    handleAddToPhysicianFavoritesClick(){
+        this.formData.wholeSaleInformation.Physician.makeFavorite = true;
+
+        this.showAddPhysicianFavoriteButton = false;
+        showSuccess(this, 'Added as Favorite', 'Note : Favorite will be saved upon order save');
     }
 
     requiredFields = {
         wholeSaleInformation: {
             account:{
-                favPhysician :false
+                favWholesaleAccount :false
             },
             Physician:{
                 firstName:false,
@@ -110,7 +131,7 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
             shippingmethod:true,
             ponumber:true,
             deliverytype:true,
-            favWholesaleAccount:true
+            favWholesaleAccount:false
         }
     };
 
@@ -118,27 +139,6 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
         wholeSaleInformation: {}
             
     };
-
-    validateForm() {
-        let isValid = true;
-    
-        console.log('this.requiredFields.wholeSaleInformation' +this.requiredFields.wholeSaleInformation);
-        console.log('this.requiredFields.wholeSaleInformation stringify' +JSON.stringify(this.requiredFields.wholeSaleInformation));
-        for (const key in this.requiredFields.wholeSaleInformation) {
-
-            if (this.requiredFields.wholeSaleInformation.hasOwnProperty(key)) {
-                
-                if (!this.requiredFields.wholeSaleInformation[key]) {
-                 
-                    isValid = false;
-                    showError('Error', 'Please fill all required fields.', 'error');
-                    break;
-                }
-            }
-        }
-    
-        return isValid;
-    }
 
     getOrder() {
         console.log('recordId', this.recordId);
@@ -149,14 +149,35 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
                 console.log("showOrdershortdesc and " + JSON.stringify(orderData))
                 console.log('status '+JSON.stringify(orderData.Status))
                 this.orderStatus = orderData.Status;
+                if (!orderData.wholeSaleInformation.Physician) {
+                    orderData.wholeSaleInformation.Physician = {};
+                }
+                if (!orderData.wholeSaleInformation.account) {
+                    orderData.wholeSaleInformation.account = {};
+                }
+
+                
+
                 this.formData = orderData;
                 this.editedData = orderData;
                 console.log(JSON.stringify(this.formData));
-                console.log('name', orderData.name);
-                console.log('this.formData.name', this.formData.name);
-                // this.handleAddFavoritesButton({fieldName: 'patientInformation.prescriber.firstName'});
-               
-                // this.handleAddFavoritesButton({fieldName: 'this.formData.name'});
+                console.log('orderData.deliverytype', orderData.deliverytype);
+                console.log('orderData.assignment', orderData.assignment);
+                console.log('this.formData.deliverytype', this.formData.wholeSaleInformation.deliverytype);
+                console.log('this.formData.assignment', this.formData.wholeSaleInformation.assignment);
+                if(orderData.wholeSaleInformation.deliverytype ==="Ship from Corporate Office"){
+                        this.showShippingMethod = true;
+                    }else  this.showShippingMethod = false;
+
+                    if(orderData.wholeSaleInformation.assignment ==="No Physician Assigned"){
+                        this.showPhysicianLookup = false;
+                    }else  this.showPhysicianLookup = true;
+
+                if(this.formData.wholeSaleInformation && this.formData.wholeSaleInformation.account && this.formData.wholeSaleInformation.account.id){
+                    this.selectedWholesaleAccountId = this.formData.wholeSaleInformation.account.id;
+                    console.log('this.selectedWholesaleAccountId', this.selectedWholesaleAccountId);
+                }
+                //this.handleAddWholeSaleFavoritesButton(this.formData.wholeSaleInformation.account.id);
                 hideLoader(this);
             })
             .catch((error) => {
@@ -165,17 +186,64 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
             });
     }
 
-    handleAddFavoritesButton(detail) {
-        const favFields = ['patientInformation.prescriber.firstName', 'patientInformation.prescriber.lastName', 'patientInformation.prescriber.npi'];
-        if (favFields.includes(detail.fieldName)) {
-            console.log('Fav tracking field changed', detail.fieldName);
-            if (!!this.editedData.patientInformation.prescriber.firstName && !!this.editedData.patientInformation.prescriber.lastName && !!this.editedData.patientInformation.prescriber.npi) {
-                console.log('All fields populated starting countdown');
+    get disableForm() {
+        console.log('this.orderStatus ', this.orderStatus );
+        if (this.orderStatus == null || this.orderStatus == '') {
+            return false;
+        }
+        return this.orderStatus !== 'Started';
+    }
+
+    handleAddWholeSaleFavoritesButton(value) {
+        if (value) {
                 this.lastTimeCheckFavoriteRequested = (new Date().getTime());
                 setTimeout(async () => {
-                    await this.checkIfPrescriberIsFavorite()
+                    await this.checkFavoriteRecord(value);
                 }, 500);
+            
+        }
+    }
+
+    handleAddPhysicianFavoritesButton(value){
+        if (value) {
+                this.lastTimeCheckFavoriteRequested = (new Date().getTime());
+                setTimeout(async () => {
+                    await this.checkPhysicianFavoriteRecord(value);
+                }, 500);
+            
+        }
+    }
+
+    async checkFavoriteRecord(value) {
+        console.log('inside checkidwholesale fav method', new Date().getTime() - this.lastTimeCheckFavoriteRequested >= 500);
+        if (new Date().getTime() - this.lastTimeCheckFavoriteRequested >= 500) {
+           
+            if (value) {
+                console.log('log 4', value);
+                this.formData.wholeSaleInformation.account.isFavorite = await isFavorite({accountId: value});
+                console.log('log fav 2', this.formData.wholeSaleInformation.account.isFavorite);
+                this.showAddFavoriteButton = !this.formData.wholeSaleInformation.account.isFavorite;
+            } else {
+                console.log('log fav 3');
+                this.showAddFavoriteButton = false;
             }
+        } else {
+            console.log('User still typing waiting');
+        }
+    }
+
+    async checkPhysicianFavoriteRecord(value) {
+        console.log('inside checkidwholesale fav method', new Date().getTime() - this.lastTimeCheckFavoriteRequested >= 500);
+        if (new Date().getTime() - this.lastTimeCheckFavoriteRequested >= 500) {
+           console.log('value>>' , value);
+            if (value) {
+                this.formData.wholeSaleInformation.Physician.isFavorite = await isPhysicianFavorite({contactId: value});
+                this.showAddPhysicianFavoriteButton = !this.formData.wholeSaleInformation.Physician.isFavorite;
+            } else {
+                this.showAddPhysicianFavoriteButton = false;
+            }
+        } else {
+            console.log('User still typing waiting');
         }
     }
 
@@ -186,17 +254,57 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
         if (validaton === false) {
             this.save(true);            
         }
+    }
 
+    areAllRequiredFieldsFilled() {
+      
+        let formData = this.formData; 
+        const requiredFields = [
+            formData.wholeSaleInformation.assignment,
+            formData.wholeSaleInformation.account.id,
+            formData.wholeSaleInformation.deliverytype,
+            formData.wholeSaleInformation.ponumber,
+            formData.wholeSaleInformation.contentRecordId
 
+        ];
+
+        if (formData.wholeSaleInformation.deliverytype === "Ship from Corporate Office") {
+            requiredFields.push(formData.wholeSaleInformation.shippingMethod);
+        }
+        
+        if (formData.wholeSaleInformation.assignment === "Assigned to Order") {
+            requiredFields.push(formData.wholeSaleInformation.Physician.id);
+        }
+        if (!formData.wholeSaleInformation.contentRecordId) {
+            return false;
+        }
+
+        console.log('requiredFields', JSON.stringify(requiredFields));
+
+        for (const field of requiredFields) {
+            console.log('field', field);
+            if (!field) {
+
+                return false; 
+            }
+        }
+    
+        return true; 
     }
 
     handleSaveandSubmit(){
-        let validaton = false;
-        // validaton = this.validationCheck();
-        validaton = false;
-        if (validaton === false) {
+        if (this.areAllRequiredFieldsFilled()) {
             this.booleanOrderStatus = true;
-            this.save(true);            
+            this.save(true);  
+            setTimeout(() => {
+                window.location.reload();
+            }, 8000);          
+        }else{
+            if (!this.formData.wholeSaleInformation.contentRecordId) {
+                showError(this, 'Validation Error', 'Please upload a PO before submitting the order');
+            } else {
+                showError(this, 'Validation Error', 'Please fill in all required fields before submitting the order');
+            }
         }
     }
 
@@ -206,9 +314,7 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
         console.log('inside save method');
         showLoader(this);
         console.log('inside save method log 2');
-        if(this.selectedRecordType){
-            this.formData.wholeSaleInformation.recordtypeId = this.selectedRecordType;
-        }
+        
         
 
         let orderData = JSON.parse(JSON.stringify(this.formData));
@@ -216,7 +322,10 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
 
 
         if (Object.keys(orderData).length !== 0 && orderData.constructor === Object) {
-           
+
+            if(this.selectedRecordType){
+                this.formData.wholeSaleInformation.recordtypeId = this.selectedRecordType;
+            }
             if (!orderData.wholeSaleInformation.account || this.isObjectEmpty(orderData.wholeSaleInformation.account)) {
                 orderData.wholeSaleInformation.account = null;
             }
@@ -243,12 +352,24 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
                     console.log('this.recordid', this.recordId);
                     this.editedData.id = result;
                     console.log('this.editedData.id', this.editedData.id);
-                    if (showSuccessMsg) {
-                    if (isCreate) {
-                        this.navigateToOrderPage(this.recordId);
-                    } else {
-                        this.getOrder();
+                    if(this.formData.wholeSaleInformation.contentRecordId !=null && this.formData.wholeSaleInformation.contentRecordId.startsWith("068")){
+                        createContentLink({contentVersionId: this.formData.wholeSaleInformation.contentRecordId, recordId: this.recordId})
+                        .then((result) => {
+                           console.log('result cntent', result);
+                        })
+                        .catch((error) => {
+                            console.log('error:' + JSON.stringify(error));
+                            hideLoader(this);
+                            showReduceErrors(this, error);
+                        });
                     }
+                    
+                    if (showSuccessMsg) {
+                         if (isCreate) {
+                            this.navigateToOrderPage(this.recordId);
+                            } else {
+                            this.getOrder();
+                            }
                     
                         showSuccess(this, 'Order Saved', 'Order saved successfully');
                     
@@ -280,7 +401,7 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
             }, 3000);
         }
 
-        return this.isNavigate;
+       
     }
 
     isObjectEmpty(obj) {
@@ -301,6 +422,7 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
         try {
             console.log(JSON.parse(JSON.stringify(event.detail)));
             let account = event.detail;
+            // this.handleInputChange(event);
             console.log('account wholsale', JSON.stringify(account));
             this.wholesaleAccountLookup = account;
             this.populateAccountData(account);
@@ -399,8 +521,8 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
                 this.showShippingMethod = false;
             }else this.showShippingMethod = true;
         }
-        if(fieldName == "shippingmethod"){
-            this.formData.wholeSaleInformation.shippingmethod = detail.value;
+        if(fieldName == "shippingMethod"){
+            this.formData.wholeSaleInformation.shippingMethod = detail.value;
         }
         if(fieldName == "ponumber"){
             this.formData.wholeSaleInformation.ponumber = detail.value;
@@ -408,8 +530,10 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
        
         console.log('formData', JSON.stringify(this.formData));
         console.log('editedData', JSON.stringify(this.editedData));
-        // this.handleAddFavoritesButton(detail);
+        //this.handleAddWholeSaleFavoritesButton(value);
     }
+
+
 
     physicianSelect(event) {
         console.log('console physican select');
@@ -449,38 +573,41 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
         }
         console.log('account.id',account.id);
         if(account.id){
-            this.formData.wholeSaleInformation.account.Id = account.id;
+            this.formData.wholeSaleInformation.account.id = account.id;
         }
+        this.formData.wholeSaleInformation.account.isFavorite = !!account.isFavorite;
         this.formData.wholeSaleInformation.account.Name = account.mainField || account.name || '';
-
         
         if (account.shippingStreet) {
             console.log('account.shippingStreet',account.shippingStreet);
             this.formData.wholeSaleInformation.street = account.shippingStreet;
-            this.editedData.wholeSaleInformation.street = account.shippingStreet;
+           
         }
     
         if (account.shippingCity) {
             this.formData.wholeSaleInformation.city = account.shippingCity;
-            this.editedData.wholeSaleInformation.city =  account.shippingCity;
+            
         }
     
         if (account.shippingCountry) {
             this.formData.wholeSaleInformation.country = account.shippingCountry;
-            this.editedData.wholeSaleInformation.country = account.shippingCountry;
+           
         }
     
         if (account.shippingState) {
             this.formData.wholeSaleInformation.province = account.shippingState;
-            this.editedData.wholeSaleInformation.province = account.shippingState;
+            
         }
     
         if (account.shippingPostalCode) {
             this.formData.wholeSaleInformation.postalCode = account.shippingPostalCode;
-            this.editedData.wholeSaleInformation.postalCode = account.shippingPostalCode;
-
+           
         }
         console.log('this.formData>>2', JSON.stringify(this.formData));
+        if(this.formData.wholeSaleInformation.account.id){
+            this.handleAddWholeSaleFavoritesButton(this.formData.wholeSaleInformation.account.id);
+        }
+        
     }
 
 
@@ -527,6 +654,10 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
 
         console.log('this.formData>>3', JSON.stringify(this.formData));
         console.log('this.editeddate>>3', JSON.stringify(this.editedData));
+        if(this.formData.wholeSaleInformation.Physician.id){
+            console.log('inside cond check physician');
+            this.handleAddPhysicianFavoritesButton(this.formData.wholeSaleInformation.Physician.id);
+        }
     }
 
     
@@ -547,6 +678,15 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
             });
     }
 
+    getAccountWholeSaleRecordtype(){
+        getAccountWholesaleecordValue().then((result) => { 
+            console.log('result', result);
+            this.wholesaleAccountRecordtypeId = result 
+            console.log('wholesaleAccountRecordtypeId', this.wholesaleAccountRecordtypeId);
+        }).catch((error) => {showReduceErrors(this, error); });
+        
+    }
+
     showFileUploadModal()  {
         this.isShowFileUploadModal = true;
     }
@@ -559,8 +699,11 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
     }
 
     openfileUpload(event) {
-
-      this.save(false);
+        let orderRecordId;
+        if(this.recordId ==undefined && this.recordId ==null){
+            orderRecordId =null;
+        }else orderRecordId =this.recordId;
+        console.log('orderRecordId', orderRecordId);
         showLoader(this);
         if (event.target.files.length > 0) {
             for (let i = 0; i < event.target.files.length; i++) {
@@ -568,7 +711,8 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
                 const reader = new FileReader();
                 reader.onload = () => {
                     let base64 = reader.result.split(',')[1];
-                    uploadFile({ base64, filename:  file.name, recordId: this.recordId, docType: null, docTypeOther: null }).then(result=>{
+                    uploadFile({ base64, filename:  file.name, recordId: orderRecordId, docType: "PO", docTypeOther: null }).then(result=>{
+                        this.formData.wholeSaleInformation.contentRecordId = result;
                         showSuccess(this, 'Success', "File uploaded successfully");
                         // this.loadFiles().catch(e => console.log(e));
                         
@@ -582,13 +726,6 @@ export default class OrthofixWholeSaleOrderForm extends NavigationMixin(Lightnin
               this.hideFileUploadModal();
               hideLoader(this);
         }
-        if (this.recordId) {
-            this.navigateToOrderPage(this.recordId);
-        } else {
-            //this.getOrder();
-        }
-        
-            showSuccess(this, 'File Uploaded', 'File Uploaded Successfully');
     }
 
     handleAddressChange(event) {

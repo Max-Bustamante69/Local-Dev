@@ -2,11 +2,12 @@
   @description       : 
   @author            : Lokesh Kesava | lokesh.kesava@argano.com
   @group             : 
-  @last modified on  : 04-15-2024
+  @last modified on  : 04-30-2024
   @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 -->
 
 <template>
+    <div class="slds-p-around_x-small">
     <lightning-spinner
                 if:true={loaderStatus}
                 alternative-text="Loading"
@@ -22,20 +23,20 @@
   
     <div class="slds-grid slds-wrap slds-p-top_medium">
         <div class="slds-col slds-size_12-of-12">
-            <div class="slds-p-top_medium slds-p-bottom_medium">
+            <div class="slds-p-around_medium">
                 <span class="slds-text-heading_small custom-underline custom-bold">Sales Rep</span>
             </div>
         </div>
         <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
             <div class="slds-p-around_x-small slds-m-right_large">
                  <lightning-combobox
+                        class="wsorderInput"
                         name="wholeSaleInformation.territoryManager"
                         label="Select Territory Manager"
                         placeholder="Select Territory Manager"
                         options={picklistOptions.territoryManagers}
                         value={formData.wholeSaleInformation.territoryManager}
                         onchange={handleInputChange}
-                        required={requiredFields.wholeSaleInformation.territoryManager}
                         disabled={disableForm}>
                 </lightning-combobox>
             </div>
@@ -46,16 +47,19 @@
 	
     <div class="slds-grid slds-wrap slds-p-top_medium">
         <div class="slds-col slds-size_12-of-12">
-            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
+            <div class="slds-border_top slds-p-around_medium">
                 <span class="slds-text-heading_small custom-underline custom-bold">Account Information</span>
             </div>
         </div>
         <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
             <div class="slds-p-around_x-small slds-m-right_large">
 
-                <c-orthofix-generic-lookup-comp label="Account" selected-icon-name="standard:account" object-label="Account"
-                        object-api-name="Account" field-api-name="Name" other-field-api-name="Oracle_Account_Number__c"
-                        onvalueselected={handleValueSelectedOnAccount}>
+                <c-orthofix-generic-lookup-comp label="Wholesale Account" selected-icon-name="standard:account" object-label="Account"
+                        object-api-name="Account" field-api-name="Name" other-field-api-name="Oracle_Account_Number__c" required="true"
+                        record-type-id={wholesaleAccountRecordtypeId} 
+                        selected-record-id={selectedWholesaleAccountId}
+                        onvalueselected={handleValueSelectedOnAccount}
+                        disabled-input={disableForm}>
                     </c-orthofix-generic-lookup-comp>
                 
             </div>
@@ -66,13 +70,13 @@
         <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
             <div class="slds-p-around_x-small slds-m-right_large">
                 <lightning-combobox
+                        class="wsorderInput"    
                         name="wholeSaleInformation.account.id"
                         label="Select a Favorite Wholesale Customer"
                         placeholder="Select a Favorite"
                         options={picklistOptions.favoriteWholeSaleCustomers}
-                        value={formData.wholeSaleInformation.account.name}
+                        value={formData.wholeSaleInformation.account.id}
                         onchange={handleChangeFavoriteWholeSaleOrder}
-                        required={requiredFields.wholeSaleInformation.favWholesaleAccount}
                         disabled={disableForm}
                 ></lightning-combobox>
                 
@@ -88,13 +92,13 @@
         <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
             <div class="slds-p-around_x-small slds-m-right_large slds-m-top_large">
                 <template if:true={showAddFavoriteButton}>
-                    <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleAddToFavoritesClick}>ADD TO FAVORITE</button>
+                    <button type="button" class="slds-button slds-button_neutral slds-button_stretch"  onclick={handleAddToFavoritesClick}>ADD TO FAVORITE</button>
                 </template>
             </div>
         </div>
         <div class="slds-col slds-medium-size_6-of-12 slds-large-size_7-of-12"></div>
 
-        <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_7-of-12 slds-large-size_9-of-12">
             <div class="slds-p-around_x-small slds-m-right_large">
                 <lightning-input-address
                         name="wholeSaleInformation.account"
@@ -109,12 +113,11 @@
                         country={formData.wholeSaleInformation.country}
                         province={formData.wholeSaleInformation.province}
                         postal-code={formData.wholeSaleInformation.postalCode}
-                        required
                         field-level-help="Address"
                         onchange={handleAddressChange}
                         read-only="true"
-                        disabled={disableForm}
-                        show-address-lookup>
+                        disabled="true"
+                       >
                         
                 </lightning-input-address>
             </div>
@@ -123,20 +126,21 @@
 		<div class="slds-col slds-medium-size_6-of-12 slds-large-size_6-of-12"></div>
 		<div class="slds-grid slds-wrap slds-p-top_medium">
         <div class="slds-col slds-size_12-of-12">
-            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
+            <div class="slds-border_top slds-p-around_medium">
                 <span class="slds-text-heading_small custom-underline custom-bold">Prescriber Information</span>
             </div>
         </div>
 		<div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
             <div class="slds-p-around_x-small slds-m-right_large">
                  <lightning-combobox
+                        class="wsorderInput"
                         name="wholeSaleInformation.assignment"
                         label="Assignment"
                         placeholder="Select an Assignment"
                         options={picklistOptions.assignment}
                         value={formData.wholeSaleInformation.assignment}
                         onchange={handleInputChange}
-                        required={requiredFields.wholeSaleInformation.assignment}
+                        required
                         disabled={disableForm}
                 ></lightning-combobox>
             </div>
@@ -150,6 +154,7 @@
                                      label="Find a Physician"
                                      onlookupupdate={physicianSelect}
                                      placeholder="type here..."
+                                     is-required="true"
                                      disabled={disableForm}>      
                                     </c-custom-lookup-lwc>
             </div>
@@ -165,16 +170,16 @@
             <div class="slds-p-around_x-small slds-m-right_large">
                 
                     <lightning-combobox
-                            name="wholeSaleInformation.physician.id"
+                            class="wsorderInput"
+                            name="wholeSaleInformation.Physician.id"
                             label="Select a Favorite Physician"
                             placeholder="Select a Favorite Physician"
                             options={picklistOptions.favoritePhysicians}
-                            value={favPhysicain}
+                           value={formData.wholeSaleInformation.Physician.id}
                             onchange={handleChangeFavoritePhysicians}
-                            required={requiredFields.wholeSaleInformation.Physician.favPhysician}
                             disabled={disableForm}
                     ></lightning-combobox>
-                    <!-- value={formData.patientInformation.physician.favPhysician} -->
+                    <!-- value={formData.wholeSaleInformation.Physician.favPhysician} -->
                
             </div>
             
@@ -197,10 +202,9 @@
                                  name="wholeSaleInformation.Physician.firstName"
                                  data-name="wholeSaleInformation.Physician.firstName"
                                  value={formData.wholeSaleInformation.Physician.firstName}
-                                 required={requiredFields.wholeSaleInformation.Physician.firstName}
                                  onchange={handleInputChange}
                                  max-length=100
-                                 disabled={disableForm}
+                                 disabled="true"
                 ></lightning-input>
             </div>
         </div>
@@ -211,10 +215,9 @@
                                  name="wholeSaleInformation.Physician.lastName"
                                  data-name="wholeSaleInformation.Physician.lastName"
                                  value={formData.wholeSaleInformation.Physician.lastName}
-                                 required={requiredFields.wholeSaleInformation.Physician.lastName}
                                  onchange={handleInputChange}
                                  max-length=100
-                                 disabled={disableForm}
+                                 disabled="true"
                 ></lightning-input>
             </div>
         </div>
@@ -225,155 +228,123 @@
                                  name="wholeSaleInformation.Physician.npi"
                                  data-name="wholeSaleInformation.Physician.npi"
                                  value={formData.wholeSaleInformation.Physician.npi}
-                                 required={requiredFields.wholeSaleInformation.Physician.npi}
                                  onchange={handleInputChange}
                                  max-length=100
-                                 disabled={disableForm}
+                                 disabled="true"
                 ></lightning-input>
             </div>
         </div>
-
-        
+        <template if:true={showAddPhysicianFavoriteButton}>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large slds-m-top_large">
+                <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleAddToPhysicianFavoritesClick}>ADD TO FAVORITE</button>
+            </div>
+        </div>
     </template>
         
-	
-
-        <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
-            <div class="slds-p-around_x-small slds-m-right_large">
-                <lightning-input type="tel"
-                                 label="Phone"
-                                 name="patientInformation.prescriber.phone"
-                                 data-name="patientInformation.prescriber.phone"
-                                 value={formData.patientInformation.prescriber.phone}
-                                 required={requiredFields.patientInformation.prescriber.phone}
-                                 onchange={handleInputChange}
-                                 max-length=100
-                ></lightning-input>
-            </div>
-        </div> -->
+    </template>
         <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
-
-       
-
-       
-        <div class="slds-col slds-medium-size_9-of-12 slds-large-size_9-of-12"></div>
-        <div class="slds-col slds-size_6-of-12 slds-large-size_3-of-12">
-            <div class="slds-p-around_x-small slds-m-right_large">
-                <template if:true={showAddFavoriteButton}>
-                    <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleAddToFavoritesClick}>ADD TO FAVORITE</button>
-                </template>
-            </div>
-        </div>
-        <div class="slds-col slds-medium-size_6-of-12 slds-large-size_6-of-12"></div>
 
     </div>
 
 
     <div class="slds-grid slds-wrap slds-p-top_medium">
         <div class="slds-col slds-size_12-of-12">
-            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
+            <div class="slds-border_top slds-p-around_medium">
                 <span class="slds-text-heading_small custom-underline custom-bold">Delivery Information</span>
             </div>
         </div>
-        <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_3-of-12">
             <div class="slds-p-around_x-small slds-m-right_large">
                 <lightning-combobox
+                            class="wsorderInput"
                             name="wholeSaleInformation.deliverytype"
                             label="Delivery Type"
                             placeholder="Select an Option"
                             options={picklistOptions.deliverytype}
                             value={formData.wholeSaleInformation.deliverytype}
                             onchange={handleInputChange}
-                            required={requiredFields.wholeSaleInformation.deliverytype}
+                            required
                             disabled={disableForm}
                     ></lightning-combobox>
-                <!-- options={picklistOptions.favoritePhysicians} -->
             </div>
         </div>
         <template if:true={showShippingMethod}>
-         <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-large-size_4-of-12">
+         <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
             <div class="slds-p-around_x-small slds-m-right_large">
 
                 <lightning-combobox
-                            name="wholeSaleInformation.shippingmethod"
+                            class="wsorderInput"
+                            name="wholeSaleInformation.shippingMethod"
                             label="Shipping Method"
                             placeholder="Select an Option"
                             options={picklistOptions.shippingmethod}
-                            value={formData.wholeSaleInformation.shippingmethod}
+                            value={formData.wholeSaleInformation.shippingMethod}
                             onchange={handleInputChange}
-                            required={requiredFields.wholeSaleInformation.shippingmethod}
+                            required
                             disabled={disableForm}
                     ></lightning-combobox>
-                <!-- options={picklistOptions.favoritePhysicians} -->
                 
             </div>
         </div>
     </template>
+    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+        <div class="slds-p-around_x-small slds-m-right_large">
+            <lightning-input type="text"
+                            class="wsorderInput"
+                            name="wholeSaleInformation.ponumber"
+                            value={formData.wholeSaleInformation.ponumber}
+                            required
+                             label="PO Number"
+                             onchange={handleInputChange}
+                             max-length=100
+                             disabled={disableForm}
+            ></lightning-input>
+        </div>
+    </div>
+
 		<div class="slds-col slds-medium-size_6-of-12 slds-large-size_6-of-12"></div>
 		</div>
-		<!-- <div class="slds-grid slds-wrap slds-p-top_medium">
-        <div class="slds-col slds-size_12-of-12">
-            <div class="slds-border_top slds-p-top_medium slds-p-bottom_medium">
-                <span class="slds-text-heading_small custom-underline custom-bold">Product Information</span>
-            </div>
-        </div> -->
-        <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12"></div> -->
-        <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
-        
-        <div class="label-flex-container">
-            <div>
-                <label class="slds-form-element__label labelclass">
-                    <span class="slds-required">*</span>
-                    Devices
-                </label>
-            </div>
-        </div>
-        <c-orthofix-devices-comp></c-orthofix-devices-comp>
-    </div> -->
-        <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12"></div> -->
-        <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
-        <div class="label-flex-container">
-            <div>
-                <label class="slds-form-element__label labelclass">
-                    <span class="slds-required">*</span>
-                    Accessories
-                </label>
-            </div>
-        </div>
-        <c-orthofix-accessories-comp></c-orthofix-accessories-comp>
-    </div> -->
-    <!-- </div> -->
-         <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+		
+         <!-- <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
             <div class="slds-p-around_x-small slds-m-right_large">
                 <lightning-input type="text"
+                                class="wsorderInput"
                                 name="wholeSaleInformation.ponumber"
                                 value={formData.wholeSaleInformation.ponumber}
-                                required={requiredFields.wholeSaleInformation.ponumber}
+                                required
                                  label="PO Number"
                                  onchange={handleInputChange}
                                  max-length=100
                                  disabled={disableForm}
                 ></lightning-input>
             </div>
-        </div>
-        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
-            <div class="slds-p-around_x-small slds-m-right_large">
+        </div> -->
+        
+            <!-- <div class="slds-p-around_x-small slds-m-right_large">
                 <lightning-button variant="brand-outline"
                                  label="Upload PO"
                                  onclick={showFileUploadModal}
                                  disabled={disableForm}
-                ></lightning-button>
+                ></lightning-button> -->
+                <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-col slds-p-around_small slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                    <button type="button" class="slds-button  slds-button_stretch" style="border-color: #009add ; color:#009add" disabled={disableForm} onclick={showFileUploadModal}>Upload PO</button>
+                </div>
             </div>
-        </div>
-        <div class="slds-grid slds-wrap">
-            <div class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+
+            <!-- </div> -->
+       <template if:false={disableForm}>
+        <div class="slds-grid slds-wrap slds-p-top_medium">
+            <div class="slds-col slds-col slds-p-around_small slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
                 <button type="button" class="slds-button  slds-button_stretch" style="border-color: #009add ; color:#009add" onclick={handleSave}>Save</button>
             </div>
             <div class="slds-col slds-size_12-of-12 slds-medium-size_2-of-12 slds-large-size_1-of-12"></div>
-            <div class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+            <div class="slds-col slds-col slds-p-around_small slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
                 <button type="button" class="slds-button  slds-button_stretch" style="color:#FFFFFF;background:#009add "   onclick={handleSaveandSubmit}>Submit to Orthofix</button>
             </div>
         </div>
+    </template>
 
 
         <template if:true={isShowFileUploadModal}>
@@ -399,4 +370,5 @@
         </template>
        
   
-</template>
+        </div>
+    </template>

@@ -1,3 +1,10 @@
+/**
+ * @description       : 
+ * @author            : manish.tyagi@argano.com
+ * @group             : 
+ * @last modified on  : 04-18-2024
+ * @last modified by  : manish.tyagi@argano.com
+**/
 import {track, api, LightningElement, wire} from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getRecordTypes from '@salesforce/apex/RecordTypesController.getRecordTypes';
@@ -7,8 +14,9 @@ const OBJECT_API_NAME = 'Order';
 
 export default class OrthofixEcCreateOrderContainer extends NavigationMixin(LightningElement) {
 
-    @api
+   @api
     recordId;
+    @api isCommunity=false;
     showModal = true;
     loaderStatus = false;
     showPatientOrderComp = false;
@@ -17,6 +25,7 @@ export default class OrthofixEcCreateOrderContainer extends NavigationMixin(Ligh
     selectedRecordTypeId;
     recordTypeOptions;
     selectedRecordTypeDeveloperName;
+    showWholeSaleOrderComp = false;
 
 
 
@@ -59,8 +68,8 @@ export default class OrthofixEcCreateOrderContainer extends NavigationMixin(Ligh
 
     handleCancel() {
         this.showModal = false;
-        this.ShowCreateForm = false;
-        this.showPatientOrderComp = false;
+         this.ShowCreateForm = false;
+          this.showPatientOrderComp = false;
         this.handleListViewNavigation();
     }
 
@@ -80,6 +89,10 @@ export default class OrthofixEcCreateOrderContainer extends NavigationMixin(Ligh
                 break;
 
             case 'Wholesale':
+                this.showWholeSaleOrderComp = true;
+                this.showPatientOrderComp = false;
+                this.ShowCreateForm = false;
+                break;
             case 'Inventory':
                 this.showPatientOrderComp = false;
                 this.ShowCreateForm = true;

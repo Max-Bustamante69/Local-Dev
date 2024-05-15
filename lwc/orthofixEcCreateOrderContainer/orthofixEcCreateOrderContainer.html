@@ -1,34 +1,36 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 04-18-2024
+  @last modified by  : manish.tyagi@argano.com
+-->
 <template>
     <div class="slds-is-relative">
-        <lightning-spinner
-                if:true={loaderStatus}
-                alternative-text="Loading"
-                size="medium"
-                class="slds-align_absolute-center">
+        <lightning-spinner if:true={loaderStatus} alternative-text="Loading" size="medium"
+            class="slds-align_absolute-center">
         </lightning-spinner>
         <template if:true={showModal}>
-        <c-orthofix-order-type-selection
-            record-type-options={recordTypeOptions}
-            oncancel={handleCancel}
-            onnext={handleNext}
-        ></c-orthofix-order-type-selection>
+            <c-orthofix-order-type-selection record-type-options={recordTypeOptions} oncancel={handleCancel}
+                onnext={handleNext}></c-orthofix-order-type-selection>
         </template>
         <template if:true={ShowCreateForm}>
-            <c-create-order-page
-                selected-record-type={selectedRecordTypeId}
-                selected-record-type-name={selectedRecordTypeName}
-                oncancel={handleCancel}
-                record-id={recordId}
-            ></c-create-order-page>
+            <c-create-order-page selected-record-type={selectedRecordTypeId}
+                selected-record-type-name={selectedRecordTypeName} oncancel={handleCancel}
+                record-id={recordId}></c-create-order-page>
         </template>
         <template if:true={showPatientOrderComp}>
-        <div class="slds-box slds-theme_default slds-p-around_medium">
-            <c-orthofix-order-form
-                onshowloader={handleShowLoader}
-                onhideloader={handleHideLoader}
-                record-id={recordId}
-            ></c-orthofix-order-form>
-        </div>
+            <div class="slds-box slds-theme_default slds-p-around_medium">
+                <c-orthofix-order-form onshowloader={handleShowLoader} onhideloader={handleHideLoader}
+                    record-id={recordId}></c-orthofix-order-form>
+            </div>
         </template>
-</div>
+        <template if:true={showWholeSaleOrderComp}>
+            <div class="slds-box slds-theme_default slds-p-around_medium">
+                <c-orthofix-whole-sale-order-form selected-record-type={selectedRecordTypeId}
+                    selected-record-type-name={selectedRecordTypeName}
+                    record-id={recordId}></c-orthofix-whole-sale-order-form>
+            </div>
+        </template>
+    </div>
 </template>

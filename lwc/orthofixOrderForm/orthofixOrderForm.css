@@ -8,9 +8,21 @@
 
 
 
+
 @media  (max-width: 767px) {
+    .slds-button{
+    justify-content: start;
+    padding-left: 0.75rem;
+    }
     .mobile-hide{
         display: none;
+    }
+    .button-mobile-class{
+        padding-right: 10px;
+        margin-right: 10px;
+    }
+    .cancel-button{
+        
     }
 
 }

@@ -12,49 +12,70 @@ export default class CancelOrderModal extends LightningElement {
     @track otherReason;
     @track showContactPhysician = false;
     @track showOtherReason = false;
-    @track IncorrectPHI;
+    @track IncorrectPHI = false;
 
+    @track orderData = {};
 
     handleReasonChange(event) {
         this.selectedReason = event.detail.value;
-        console.log(JSON.stringify(this.selectedReason));
-        this.showContactPhysician = this.selectedReason === 'Incorrect PHI';
-        this.showOtherReason = this.selectedReason === 'Other';
+        this.orderData.selectedReason = this.selectedReason;
+        this.orderData.IncorrectPHI = false;
+        this.orderData.otherReason = null;
+        this.showContactPhysician = this.orderData.selectedReason === 'Incorrect PHI';
+        this.showOtherReason = this.orderData.selectedReason === 'Other';
 
     } 
 
     handleOtherReason(event){
         this.otherReason =  event.detail.value;
+        this.orderData.otherReason = this.otherReason;
     }
     contactPhysician(event){
         console.log('contactPhysician');
         console.log("event.detail.value  " +JSON.stringify(event.target.checked));
         this.IncorrectPHI = event.target.checked;
+        this.orderData.IncorrectPHI =  this.IncorrectPHI;
+    }
+
+    areAllRequiredFieldsFilled() {
+      
+        let formData = this.orderData; 
+        const requiredFields = [
+            formData.selectedReason,
+
+        ];
+
+        if (formData.selectedReason === "Incorrect PHI") {
+            requiredFields.push(formData.IncorrectPHI);
+        }
+        
+        if (formData.selectedReason === "Other") {
+            requiredFields.push(formData.otherReason);
+        }
+
+        console.log('requiredFields', JSON.stringify(requiredFields));
+
+        for (const field of requiredFields) {
+            console.log('field', field);
+            if (!field) {
+
+                return false; 
+            }
+        }
+    
+        return true; 
     }
 
     handleSubmit(event) {
-        if(this.selectedReason){
-            event.preventDefault();
-        showLoader(this);
-        if  (this.selectedReason === 'Incorrect PHI'){
-            this.otherReason = null;
-        }
-        else if (this.selectedReason === 'Other'){
-            this.IncorrectPHI = null;
-        }else{
-            this.otherReason = null;
-            this.IncorrectPHI = null;
-        }
-
+        event.preventDefault();
         
-        this.save(true);
-        //this.dispatchEvent(new CloseActionScreenEvent());
-        console.log('calling save method');
-        }else {
-            showError(this, 'Validation Error', 'Select Reason for cancellation');
-        }
-        
-
+         console.log('OrderData', JSON.stringify(this.orderData));
+         if (this.areAllRequiredFieldsFilled()) {
+            this.save(true);
+            console.log('calling save method');
+         }else{
+            showError(this, 'Validation Error', 'Please fill in required fields');
+         }
     }
 
     save(showSuccessMsg){

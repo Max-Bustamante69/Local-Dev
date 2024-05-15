@@ -12,6 +12,7 @@ export default class CustomLookupLwc extends LightningElement {
     @api sObjectApiName = 'Account';
     @api defaultRecordId = '';
     @api disabled = false;
+    @api isRequired = false;
     // private properties
     lstResult = []; // to store list of returned records
     hasRecords = true;

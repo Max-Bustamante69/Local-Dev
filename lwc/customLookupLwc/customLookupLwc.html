@@ -5,7 +5,10 @@ Source : lwcFactory.com
 <template>
     <div class="slds-form-element" onmouseleave={toggleResult}  data-source="lookupContainer">
         <div class="slds-combobox_container slds-has-selection">
-            <label class="slds-form-element__label" for="combobox-id-1">{label}</label>
+            <label class="slds-form-element__label" for="combobox-id-1">
+                <template if:true={isRequired}>
+                    <span class="slds-required">*</span>
+                </template>{label}</label>
             <div class="lookupInputContainer slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" aria-expanded="false" aria-haspopup="listbox" role="combobox">
                 <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_left-right" role="none">
                     <div class="searchBoxWrapper slds-show">

@@ -2,7 +2,7 @@
   @description       : 
   @author            : Lokesh Kesava | lokesh.kesava@argano.com
   @group             : 
-  @last modified on  : 04-14-2024
+  @last modified on  : 04-18-2024
   @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 -->
 <template>
@@ -56,7 +56,7 @@
                                 <!-- <lightning-button-icon class="icon-class" icon-name='utility:check' alternative-text='check'
                                                        variant='success' size='x-small'
                                                        title='check'></lightning-button-icon> -->
-                            <lightning-icon class="icon-class" icon-name='utility:success' alternative-text='Submited' variant='success' size='small' title='success'></lightning-icon>
+                            <lightning-icon class="icon-class" icon-name={file.icon} alternative-text='Submited' variant={file.variant} size='small' title='success'></lightning-icon>
                             </div>
                         </td>
                         <td>
@@ -66,7 +66,7 @@
                         </td>
                         <td>
                             <div class="slds-p-around_small slds-truncate" title="">
-                                {file.DocumentType__c}
+                                {file.docType}
                             </div>
                         </td>
                         <td>
@@ -198,7 +198,7 @@
                             <div class="slds-form-element">
 
                                 <!-- <div class="slds-p-horizontal_small slds-truncate">  -->
-                                    <c-orthofix-generic-multi-select-pick-list multi-select="true" onselectoption={handleSelectOptionList} options={picklistOptions.doctype} selected-values={selectedDocumentTypes} label="Document Type"></c-orthofix-generic-multi-select-pick-list>
+                                    <c-orthofix-generic-multi-select-pick-list  onselectoption={handleSelectOptionList} options={picklistOptions.doctype} selected-values={selectedDocumentTypes} label="Document Type"></c-orthofix-generic-multi-select-pick-list>
                                 <!-- </div> -->
                                 
                                 
@@ -258,7 +258,7 @@
                                 <div class="slds-form-element__control">
                                     <div class="slds-float_left slds-p-top_small slds-p-right_small">
                                     <template if:true={showOtherMultiSelect}>
-                                        <c-orthofix-generic-multi-select-pick-list multi-select="true" onselectoption={handleSelectOtherOptionList} options={picklistOptions.otherdoctype} selected-values={selectedDocumentOtherTypes} label="Other Document Type"></c-orthofix-generic-multi-select-pick-list>
+                                        <c-orthofix-generic-multi-select-pick-list onselectoption={handleSelectOtherOptionList} options={picklistOptions.otherdoctype} selected-values={selectedDocumentOtherTypes} label="Other Document Type"></c-orthofix-generic-multi-select-pick-list>
                                     </template>
                                 </div>
                                     <!-- <div class="slds-float_left slds-p-top_small slds-p-right_small">
@@ -327,45 +327,62 @@
                 </tbody>
             </table>
 
-            <table class="slds-hide_medium slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered of-document-upload-table" aria-label="">
+            <table class="slds-hide_medium slds-table_cell-buffer slds-no-row-hover of-document-upload-table flex" aria-label="">
                 <thead class="test-scm">
-                    <tr class="slds-line-height_reset">
-                        <th class="" scope="col">
-                            <div class="slds-p-around_small slds-truncate" title="">Documentation</div>
-                        </th>
-                        <th class="" scope="col">
-                            <div class="slds-p-around_small slds-truncate" title="">Submitted By</div>
-                        </th>
-                        <th class="" scope="col">
-                            <div class="slds-p-around_small slds-truncate" title="">Date</div>
-                        </th>
-                    </tr>
+                    <template if:false={noFilesExist}>
+                            <tr class="slds-line-height_reset">
+                                <th class="slds-p-around_small slds-truncate" scope="col">Submitted By</th>
+                                <th class="slds-p-around_small slds-truncate" scope="col">Document Type</th>
+                                <th class="slds-p-around_small slds-truncate" scope="col">Date</th>
+                            </tr>
+                    </template>
+                    <template if:true={noFilesExist}>
+                        <template for:each={orderFiles} for:item="file">
+                            <tr key={file.id} class="slds-line-height_reset">
+                                <th class="slds-p-around_small slds-truncate" scope="col">Submitted By</th>
+                                <th class="slds-p-around_small slds-truncate" scope="col">Date</th>
+                                <th class="slds-p-around_small slds-truncate" scope="col">Document Type</th>
+                                <th class="slds-p-around_small slds-truncate" scope="col">View</th>
+                            </tr>
+                        </template>
+                    </template>
                 </thead>
                 <tbody>
-                    
                     <template for:each={orderFiles} for:item="file">
-                        <tr key={file.id} class="slds-hint-parent ">
-                            <td>
-                                <div class="slds-p-around_small slds-truncate" title="">
-                                    {file.Title}
-                                </div>
+                        <tr key={file.id} class="slds-hint-parent">
+                            <td class="slds-p-around_small slds-truncate">{file.Owner.Name}</td>
+                            <td class="slds-p-around_small slds-truncate">
+                                <lightning-formatted-date-time value={file.CreatedDate}></lightning-formatted-date-time>
                             </td>
-                            <td>
-                                <div class="slds-p-around_small slds-truncate" title="">
-                                    {file.Owner.Name}
-                                </div>
-                            </td>
-                            <td>
-                                <div class="slds-p-around_small slds-truncate" title="">
-                                    <lightning-formatted-date-time
-                                        value={file.CreatedDate}>
-                                    </lightning-formatted-date-time>
-                                </div>
+                            <td class="slds-p-around_small slds-truncate">{file.docType}</td>
+                        </tr>
+                        <tr key={file.id}>
+                            <td class="slds-p-around_small slds-truncate" rowspan="2">
+                                <lightning-button-icon icon-name='utility:preview' alternative-text='preview'
+                                                       variant='error' size='x-small' title='delete' onclick={filePreview}
+                                                       value={file.ContentDocumentId}></lightning-button-icon>
+                                <lightning-button-icon class="icon-class-delete" icon-name='utility:delete' alternative-text='delete'
+                                                       variant='error' size='x-small' title='delete'
+                                                       disabled={clinicalDisableForm} onclick={handleFileDelete}
+                                                       value={file.Id}></lightning-button-icon>
                             </td>
                         </tr>
                     </template>
                 </tbody>
+
+
+                
             </table>
+            
+            <div class="slds-hide_medium slds-p-around_small">
+                <button type="button" class="slds-button slds-button_outline-brand slds-p-around_x-small custom-bold"
+                        style="border: 2px solid rgb(1 118 211);" onclick={addAnotherDocument}>ADD ANOTHER DOCUMENT
+                </button>
+            </div>
+
+            
+
+
             <table class="slds-show_medium scm-modified-prev-class slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" aria-label="">
                 <tr class="slds-line-height_reset">
                     <td class="" scope="col">
@@ -457,7 +474,6 @@
                     <lightning-input type="file"
                                      accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf"
                                      label="Attachment" onchange={openfileUpload}
-                                     multiple
                     ></lightning-input>
                 </div>
                 <div class="slds-modal__footer">

@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : manish.tyagi@argano.com
  * @group             : 
- * @last modified on  : 04-02-2024
+ * @last modified on  : 04-25-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 **/
 import {api, track, LightningElement} from 'lwc';
@@ -44,6 +44,14 @@ export default class OrthofixOrderFormClinicalInformation extends LightningEleme
         let isFileExist = event.detail;
         console.log('isFileExist in clinical', isFileExist);
         this.dispatchEvent(new CustomEvent('fileexist', { detail: isFileExist}));
+    }
+    @api
+    checkOrderFiles(){
+        const documentsComp = this.template.querySelector('c-orthofix-order-form-documents-item-desktop');
+        if (documentsComp) {
+                console.log('inside documentsComp');
+                documentsComp.checkOrderFiles();
+        }
     }
 
    

@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : manish.tyagi@argano.com
  * @group             : 
- * @last modified on  : 04-14-2024
+ * @last modified on  : 05-06-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 **/
 import {showSuccess, showError, showReduceErrors, showLoader, hideLoader} from 'c/orthofixNotificationUtility';
@@ -10,6 +10,7 @@ import {api, LightningElement, track, wire} from 'lwc';
 import uploadFile from "@salesforce/apex/FileUploaderController.uploadFile";
 import getCurrentUser from "@salesforce/apex/FileUploaderController.getCurrentUser";
 import getFiles from "@salesforce/apex/FileUploaderController.getFiles";
+import hasFiles from "@salesforce/apex/FileUploaderController.hasFiles";
 import deleteContentVersionRecord from "@salesforce/apex/FileUploaderController.deleteContentVersionRecord";
 import {NavigationMixin} from "lightning/navigation";
 import physioStimLOMNFormURL from '@salesforce/label/c.PhysioStim_LOMN_Form_Titan_URL';
@@ -32,6 +33,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     @api picklistOptions;
     @api requiredFields;
     @track orderFiles = [];
+    @track noFilesExist = true;
     @track isShowModal = false;
     @track isShowFileUploadModal = false;
     @track values= new Set();
@@ -46,10 +48,10 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     @api orderCancelled;
     @track disablerequiredforPrecriptionCheck = true;
     loadFilesCalled = false;
-    @track selectedValueList = [];
+    @track selectedValueList = '';
     @track selectedValue = [];
     @track showOtherMultiSelect = false;
-    @track selectedValueOtherList = [];
+    @track selectedValueOtherList = '';
     selectedDocumentTypes=[];
     selectedDocumentOtherTypes=[];
 
@@ -58,7 +60,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         this.loadFiles().catch(e => console.log(e));
     }
 
-    
+
 
 
     get isSubmittedToIA() {
@@ -78,13 +80,12 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     }
 
     get mainDeficiencies() {
-        return [...this.deficienciencies, ...this.otherDeficiencies].filter(x => x !== 'LETTER OF MEDICAL NECESSITY');
+        return [...this.deficienciencies, ...this.otherDeficiencies].filter(x => x !== 'LETTER OF MEDICAL NECESSITY').filter(d => !this.orderFiles.some(f => f.docType === d));
     }
 
     get lomnDeficiencies() {
-        return [...this.deficienciencies, ...this.otherDeficiencies].filter(x => x === 'LETTER OF MEDICAL NECESSITY');
+        return [...this.deficienciencies, ...this.otherDeficiencies].filter(x => x === 'LETTER OF MEDICAL NECESSITY').filter(d => !this.orderFiles.some(f => f.docType === d));
     }
-
 
     get formTitanUrl() {
         var productType = this.formData.patientInformation.productType;
@@ -129,7 +130,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         let name = event.target.name;
         console.log('name', name);
 
-        if(name === 'Prescription'){
+        if(name === 'PRESCRIPTION'){
             console.log('inside doctypechange');
             const isChecked = event.detail.checked;
             console.log('isChecked', isChecked);
@@ -154,9 +155,9 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         this.selectedValueList = event.detail;
         
         console.log('this.selectedValueList', this.selectedValueList);
-        this.showOtherMultiSelect = this.selectedValueList.includes('Other');
+        this.showOtherMultiSelect = this.selectedValueList == 'Other'
 
-        if(this.selectedValueList.includes('Prescription')){
+        if(this.selectedValueList == 'PRESCRIPTION'){
             isChecked = true;
             console.log('inside 1')
         } 
@@ -171,6 +172,18 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         
     }
 
+    @api checkOrderFiles(){
+        hasFiles({ orderId: this.myRecordId })
+            .then(result => {
+                console.log('result hasfiles' , result);
+                noFilesExist = result;
+                this.dispatchEvent(new CustomEvent('fileexist', { detail: !noFilesExist }));
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.hasFiles = undefined;
+            });
+    }
     
         
             
@@ -197,10 +210,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         console.log('this.selectedValueOtherList', this.selectedValueOtherList);
     }
      
-     handleSelectOption(event){
-        console.log(event.detail);
-        this.selectedValue = event.detail;
-    }
+   
 
     openfileUpload(event) {
         showLoader(this);
@@ -210,7 +220,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
                 const reader = new FileReader();
                 reader.onload = () => {
                     let base64 = reader.result.split(',')[1];
-                    uploadFile({ base64, filename:  file.name, recordId: this.myRecordId, docType: [...this.selectedValueList].join(';'), docTypeOther: [...this.selectedValueOtherList].join(';')}).then(result=>{
+                    uploadFile({ base64, filename:  file.name, recordId: this.myRecordId, docType: this.selectedValueList, docTypeOther: this.selectedValueOtherList}).then(result=>{
                         showSuccess(this, 'Success', "File uploaded successfully");
                         this.loadFiles().catch(e => console.log(e));
                         
@@ -247,41 +257,62 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
 
     async loadFiles() {
         showLoader(this);
+
         this.orderFiles = await getFiles({recordId: this.myRecordId});
+
         console.log(JSON.stringify(this.orderFiles));
         console.log('Doc type',JSON.stringify(this.orderFiles.DocumentType__c));
         console.log('Other doc type',this.orderFiles.DocumentType__c);
         console.log('this.orderFiles', this.orderFiles.length);
         hideLoader(this);
+        let isPrescriptionExist = false; 
+        let noFilesExist = false;
 
         if (this.orderFiles.length == 0) {
             console.log('inside loadfiles cond');
-        const isFilesExist = false;
-        console.log('isFilesExist', isFilesExist);
-        this.dispatchEvent(new CustomEvent('fileexist', { detail: isFilesExist }));
+            console.log('noFilesExist', noFilesExist);
+            //this.dispatchEvent(new CustomEvent('fileexist', { detail: noFilesExist }));
         }else{
             let documentTypes = [];
             let OtherdocumentTypes = [];
             console.log('documentTypes', documentTypes);
             console.log('OtherdocumentTypes', OtherdocumentTypes);
             this.orderFiles.forEach(file => {
+                file.docType = file.DocumentType__c;
+                file.icon = 'utility:success';
+                file.variant = 'success';
                 let docType = file.DocumentType__c;
                 let otherDocType = file.DocumentTypeOther__c;
                 if (docType) {
                     documentTypes.push(docType);
                 }
                 if (otherDocType) {
+                    file.docType = `Other(${otherDocType})`;
                     OtherdocumentTypes.push(otherDocType);
                 }
+
+                if (docType === "PRESCRIPTION") {
+                    isPrescriptionExist = true; 
+                }
+
+                if ([...this.deficienciencies, ...this.otherDeficiencies].includes(file.docType)) {
+                    file.icon = 'utility:clock';
+                    file.variant = 'warning';
+                }
             });
-            this.selectedDocumentTypes = documentTypes.join(',');
-            this.selectedDocumentOtherTypes = OtherdocumentTypes.join(',');
-            console.log('this.selectedDocumentTypes', this.selectedDocumentTypes);
-            console.log('this.selectedDocumentOtherTypes', this.selectedDocumentOtherTypes);
+
+            console.log('Is Prescription Exist:', isPrescriptionExist);
+            this.dispatchEvent(new CustomEvent('checkboxchange', { detail: isPrescriptionExist }));
+            noFilesExist = this.orderFiles.length === 0;
+            //this.dispatchEvent(new CustomEvent('fileexist', { detail: noFilesExist }));
+            // this.selectedDocumentTypes = documentTypes.join(',');
+            // this.selectedDocumentOtherTypes = OtherdocumentTypes.join(',');
+            // console.log('this.selectedDocumentTypes', this.selectedDocumentTypes);
+            // console.log('this.selectedDocumentOtherTypes', this.selectedDocumentOtherTypes);
            
         }
-        this.selectedDocumentTypes = documentTypes.join(',');
-        this.selectedDocumentOtherTypes = OtherdocumentTypes.join(',');
+        // this.selectedDocumentTypes = documentTypes.join(',');
+        // this.selectedDocumentOtherTypes = OtherdocumentTypes.join(',');
         
 
     }
@@ -299,7 +330,8 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
        .catch(error => {
            showError(this, 'Error', 'An error occurred while deleting the record.');
        });
-  
+       
+       this.noFilesExist = this.orderFiles.length === 0;
     }
 
     
