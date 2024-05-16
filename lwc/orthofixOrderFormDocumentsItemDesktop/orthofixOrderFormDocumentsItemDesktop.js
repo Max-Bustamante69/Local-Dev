@@ -33,9 +33,10 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     @api picklistOptions;
     @api requiredFields;
     @track orderFiles = [];
-    @track noFilesExist = true;
+    @track filesExist = false;
     @track isShowModal = false;
     @track isShowFileUploadModal = false;
+    @track isShowFileUploadMobile = false;
     @track values= new Set();
     @track otherDisabled = true;
     @track docTypeOther = '';
@@ -126,6 +127,10 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
        return this.orderCancelled;
     }
 
+    get addFileButtonLabel() {
+        return this.filesExist ? 'ADD ANOTHER DOCUMENT' : 'ADD DOCUMENT';
+    }
+
     docTypeChange(event) {
         let name = event.target.name;
         console.log('name', name);
@@ -176,8 +181,8 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         hasFiles({ orderId: this.myRecordId })
             .then(result => {
                 console.log('result hasfiles' , result);
-                noFilesExist = result;
-                this.dispatchEvent(new CustomEvent('fileexist', { detail: !noFilesExist }));
+                filesExist = !result;
+                this.dispatchEvent(new CustomEvent('fileexist', { detail: filesExist }));
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -232,6 +237,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
                 reader.readAsDataURL(file);
             }
               this.hideFileUploadModal();
+              this.hideFileUploadMobile();
               hideLoader(this);
         }
 
@@ -255,6 +261,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         reader.readAsDataURL(file);*/
     }
 
+    
     async loadFiles() {
         showLoader(this);
 
@@ -265,13 +272,13 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         console.log('Other doc type',this.orderFiles.DocumentType__c);
         console.log('this.orderFiles', this.orderFiles.length);
         hideLoader(this);
-        let isPrescriptionExist = false; 
-        let noFilesExist = false;
-
-        if (this.orderFiles.length == 0) {
+        let isPrescriptionExist = false;
+        
+        if (!this.hasFiles()) {
             console.log('inside loadfiles cond');
-            console.log('noFilesExist', noFilesExist);
-            //this.dispatchEvent(new CustomEvent('fileexist', { detail: noFilesExist }));
+            console.log('Files Exist', this.filesExist);
+
+            //this.dispatchEvent(new CustomEvent('fileexist', { detail: filesExist }));
         }else{
             let documentTypes = [];
             let OtherdocumentTypes = [];
@@ -303,13 +310,13 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
 
             console.log('Is Prescription Exist:', isPrescriptionExist);
             this.dispatchEvent(new CustomEvent('checkboxchange', { detail: isPrescriptionExist }));
-            noFilesExist = this.orderFiles.length === 0;
-            //this.dispatchEvent(new CustomEvent('fileexist', { detail: noFilesExist }));
+            this.selectedValueList = '';
+            this.updateFileStatus();
+            //this.dispatchEvent(new CustomEvent('fileexist', { detail: filesExist }));
             // this.selectedDocumentTypes = documentTypes.join(',');
             // this.selectedDocumentOtherTypes = OtherdocumentTypes.join(',');
             // console.log('this.selectedDocumentTypes', this.selectedDocumentTypes);
             // console.log('this.selectedDocumentOtherTypes', this.selectedDocumentOtherTypes);
-           
         }
         // this.selectedDocumentTypes = documentTypes.join(',');
         // this.selectedDocumentOtherTypes = OtherdocumentTypes.join(',');
@@ -326,12 +333,13 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
            } else {
                showError(this, 'Error', 'Record not found or an error occurred.');
            }
+          this.updateFileStatus();
        })
        .catch(error => {
            showError(this, 'Error', 'An error occurred while deleting the record.');
        });
        
-       this.noFilesExist = this.orderFiles.length === 0;
+
     }
 
     
@@ -356,6 +364,25 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     hideFileUploadModal() {
         this.isShowFileUploadModal = false;
     }
+
+    showFileUploadMobile() {
+        this.isShowFileUploadMobile = true;
+    }
+
+    hideFileUploadMobile() {
+        this.isShowFileUploadMobile = false;
+    }
+
+    hasFiles() {
+        return this.filesExist = this.orderFiles.length > 0;    
+    }
+
+    updateFileStatus(){
+        this.filesExist = this.hasFiles();
+    }
+
+
+
 
     
     
