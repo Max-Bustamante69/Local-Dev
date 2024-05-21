@@ -37,6 +37,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     @track isShowModal = false;
     @track isShowFileUploadModal = false;
     @track isShowFileUploadMobile = false;
+    @track isShowFileUploadButtonMobile = false;
     @track values= new Set();
     @track otherDisabled = true;
     @track docTypeOther = '';
@@ -174,7 +175,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         console.log('this.selectedValueList', this.selectedValueList);
         this.showOtherMultiSelect = this.selectedValueList == 'Other'
         this.otherRequired = this.showOtherMultiSelect;
-        this.showFileUploadMobile = !this.showOtherMultiSelect;
+        !this.showOtherMultiSelect ? this.showUploadButtonMobile() : this.hideUploadButtonMobile();
         if(this.selectedValueList == 'PRESCRIPTION'){
             isChecked = true;
             console.log('inside 1')
@@ -361,7 +362,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
     handleInputChange(event){
         let value = event.target.value;
         this.selectedValueOtherList  = value;
-        this.isShowFileUploadMobile = this.selectedValueOtherList.trim() != '';
+        this.selectedValueOtherList.trim() != '' ? this.showUploadButtonMobile() : this.hideUploadButtonMobile();
     }
 
     generate() {
@@ -383,6 +384,14 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         this.isShowFileUploadMobile = true;
     }
 
+    hideUploadButtonMobile() {
+        this.isShowFileUploadButtonMobile = false;
+    }
+
+    showUploadButtonMobile() {
+        this.isShowFileUploadButtonMobile = true;
+    }
+
     hideFileUploadMobile() {
         this.isShowFileUploadMobile = false;
     }
@@ -399,8 +408,11 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         this.selectedValueList = '';
         this.selectedValueOtherList = '';
         this.showOtherMultiSelect = false;
-        this.showFileUploadMobile = false;
+        this.isShowFileUploadMobile = false;
+        this.isShowFileUploadButtonMobile = false;
     }
+
+
 
 
 

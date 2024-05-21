@@ -47,8 +47,9 @@
 }
 
 .other-required::before {
-    content: "*";
-    color: red;
+    content: " *";
+    color: rgb(234, 0, 30);
+    margin: 0.125rem;
 }
 
 
@@ -135,6 +136,8 @@ tbody tr{
 }
 
 .of-form-upload__upload-container{
+    display: flex;
+    flex-direction: column;
     margin-bottom: 20px;
 }
 
