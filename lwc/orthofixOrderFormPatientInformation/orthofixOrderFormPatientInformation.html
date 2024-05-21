@@ -2,7 +2,7 @@
   @description       : 
   @author            : Lokesh Kesava | lokesh.kesava@argano.com
   @group             : 
-  @last modified on  : 05-08-2024
+  @last modified on  : 05-20-2024
   @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 -->
 
@@ -514,7 +514,8 @@
                         disabled-input={disableForm}
                         physician-contact={selectedPhysicianId}
                         record-type-id={addressContactRectype}
-                        parent-record-id={selectedPhysicianId}>
+                        parent-record-id={selectedPhysicianId}
+                        onunselectevent={makeAddressNull}>
                     </c-orthofix-generic-lookup-comp>
                
             </div>
@@ -532,7 +533,8 @@
                         disabled-input={disableForm}
                         physician-contact={selectedPhysicianId}
                         record-type-id={phoneContactRectype}
-                        parent-record-id={selectedPhysicianId}>
+                        parent-record-id={selectedPhysicianId}
+                        onunselectevent={makePhoneNumberNull}>
                     </c-orthofix-generic-lookup-comp>
         </div>
         </div>
@@ -715,7 +717,7 @@
                                  onchange={handleInputChange}
                                  placeholder="FirstName LastName"
                                  max-length=100
-                                 disabled={disableForm}
+                                 disabled
                 ></lightning-input>
             </div>
         </div>
@@ -729,7 +731,7 @@
                                  required={requiredFields.patientInformation.primaryCarePhysician.npi}
                                  onchange={handleInputChange}
                                  max-length=100
-                                 disabled={disableForm}
+                                 disabled
                 ></lightning-input>
             </div>
         </div>
@@ -745,7 +747,7 @@
                                  max-length=12
                                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}$"
                                  placeholder="_ _ _ -_ _ _- _ _ _ _"
-                                 disabled={disableForm}
+                                 disabled
                 ></lightning-input>
             </div>
         </div>
@@ -759,7 +761,7 @@
                                  required={requiredFields.patientInformation.primaryCarePhysician.fax}
                                  onchange={handleInputChange}
                                  max-length=100
-                                 disabled={disableForm}
+                                 disabled
                 ></lightning-input>
             </div>
         </div>
@@ -773,7 +775,7 @@
                                  required={requiredFields.patientInformation.primaryCarePhysician.refferalcoordinator}
                                  onchange={handleInputChange}
                                  max-length=100
-                                 disabled={disableForm}
+                                 disabled
                 ></lightning-input>
             </div>
         </div>

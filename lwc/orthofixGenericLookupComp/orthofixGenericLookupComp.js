@@ -2,7 +2,7 @@
  * @description       : Genric lookup component used for account, contact, zupcode and asset object in lwc components
  * @author            : lokesh.kesava@argano.com
  * @group             : 
- * @last modified on  : 05-06-2024
+ * @last modified on  : 05-20-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 **/
 
@@ -134,7 +134,8 @@ export default class OrthofixGenericLookupComp extends LightningElement {
     handleCommit() {
         this.selectedRecordId = "";
         this.selectedRecordName = "";
-        if(this.objectApiName == 'Asset' && this.selectedRecordId == ""){
+    
+        if ((this.objectApiName == 'Asset' || this.objectApiName == 'Address__c' || this.objectApiName == 'PhoneNumber__c') && this.selectedRecordId == "") {
             console.log('selectedRecordId>>> ', this.selectedRecordId);
             console.log('objectApiName>>> ', this.objectApiName);
             const unselectEvent = new CustomEvent('unselectevent', {

@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : manish.tyagi@argano.com
  * @group             : 
- * @last modified on  : 05-06-2024
+ * @last modified on  : 05-16-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 **/
 import {showSuccess, showError, showReduceErrors, showLoader, hideLoader} from 'c/orthofixNotificationUtility';
@@ -61,6 +61,19 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         this.loadFiles().catch(e => console.log(e));
     }
 
+    get sortedPicklistOptions() {
+        if (this.picklistOptions && this.picklistOptions.doctype) {
+            const options = [...this.picklistOptions.doctype];
+            options.sort((a, b) => {
+                if (a.label === 'Other') return 1;
+                if (b.label === 'Other') return -1;
+                return a.label.localeCompare(b.label);
+            });
+            return options;
+        }
+        return [];
+    }
+    
 
 
 
@@ -158,10 +171,10 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         let isChecked = false;
         console.log('eventdetail>>', event.detail);
         this.selectedValueList = event.detail;
-        
         console.log('this.selectedValueList', this.selectedValueList);
         this.showOtherMultiSelect = this.selectedValueList == 'Other'
-
+        this.otherRequired = this.showOtherMultiSelect;
+        this.showFileUploadMobile = !this.showOtherMultiSelect;
         if(this.selectedValueList == 'PRESCRIPTION'){
             isChecked = true;
             console.log('inside 1')
@@ -211,7 +224,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
 
     handleSelectOtherOptionList(event){
         console.log(event.detail);
-        this.selectedValueOtherList = event.detail;
+        this.selectedValueOtherList  = event.detail;
         console.log('this.selectedValueOtherList', this.selectedValueOtherList);
     }
      
@@ -310,7 +323,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
 
             console.log('Is Prescription Exist:', isPrescriptionExist);
             this.dispatchEvent(new CustomEvent('checkboxchange', { detail: isPrescriptionExist }));
-            this.selectedValueList = '';
+            this.resetUpload()
             this.updateFileStatus();
             //this.dispatchEvent(new CustomEvent('fileexist', { detail: filesExist }));
             // this.selectedDocumentTypes = documentTypes.join(',');
@@ -347,7 +360,8 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
 
     handleInputChange(event){
         let value = event.target.value;
-        this.docTypeOther = value;
+        this.selectedValueOtherList  = value;
+        this.isShowFileUploadMobile = this.selectedValueOtherList.trim() != '';
     }
 
     generate() {
@@ -379,6 +393,13 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
 
     updateFileStatus(){
         this.filesExist = this.hasFiles();
+    }
+
+    resetUpload() {
+        this.selectedValueList = '';
+        this.selectedValueOtherList = '';
+        this.showOtherMultiSelect = false;
+        this.showFileUploadMobile = false;
     }
 
 

@@ -88,6 +88,16 @@ export default class CustomLookupLwc extends LightningElement {
         const pillDiv = this.template.querySelector('.pillDiv');
         pillDiv.classList.remove('slds-show');
         pillDiv.classList.add('slds-hide');
+        console.log('inside handleremove fun');
+        console.log('selectedRecord>>' , this.selectedRecord);
+        if ((this.selectedRecord == null || this.selectedRecord == '') && this.sObjectApiName =='Contact') {
+            console.log('inside handleremove cond fun');
+            console.log('selectedRecord>>> ', this.selectedRecord);
+            const unselectEvent = new CustomEvent('unselectevent', {
+                detail: this.selectedRecord
+            });
+            this.dispatchEvent(unselectEvent);
+        }
     }
     // method to update selected record from search result
     handelSelectedRecord(event){

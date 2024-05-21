@@ -42,6 +42,10 @@ export default class OrthofixOrderFormPatientInformation extends NavigationMixin
 
 
     get prescriberAddress(){
+        if (this.selectedAddRecord === null) {
+            return null;
+        }
+
         if(this.prescriberDataFromLookup){
             return {
                 street:this.prescriberDataFromLookup.mainField,
@@ -233,10 +237,10 @@ export default class OrthofixOrderFormPatientInformation extends NavigationMixin
             this.dispatchEvent(new CustomEvent('inputchange', {detail: {fieldName: "patientInformation.prescriber.lastName", value: contact.lastName}}));
             this.template.querySelector('lightning-input[data-name="patientInformation.prescriber.lastName"]').value = contact.lastName;
         }
-        if(contact.phone){
-            this.dispatchEvent(new CustomEvent('inputchange', {detail: {fieldName: "patientInformation.prescriber.phone", value: contact.phone}}));
-            this.template.querySelector('lightning-input[data-name="patientInformation.prescriber.phone"]').value = contact.phone;
-        }
+        // if(contact.phone){
+        //     this.dispatchEvent(new CustomEvent('inputchange', {detail: {fieldName: "patientInformation.prescriber.phone", value: contact.phone}}));
+        //     this.template.querySelector('lightning-input[data-name="patientInformation.prescriber.phone"]').value = contact.phone;
+        // }
         if(contact.npi){
             this.dispatchEvent(new CustomEvent('inputchange', {detail: {fieldName: "patientInformation.prescriber.npi", value: contact.npi}}));
             this.template.querySelector('lightning-input[data-name="patientInformation.prescriber.npi"]').value = contact.npi;
@@ -313,6 +317,13 @@ export default class OrthofixOrderFormPatientInformation extends NavigationMixin
         }
 
 
+    }
+    selectedAddRecord = '';
+    makeAddressNull(event){
+        let address = event.detail;
+        console.log('address make null', address);
+        this.selectedAddRecord = address;
+        console.log('this.selectedAddRecord', this.selectedAddRecord);
     }
 
     handleValueSelectedOnZip(event){

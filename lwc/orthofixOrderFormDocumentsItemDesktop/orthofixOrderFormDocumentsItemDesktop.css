@@ -46,6 +46,11 @@
     display: flex;
 }
 
+.other-required::before {
+    content: "*";
+    color: red;
+}
+
 
 thead tr{
     display: flex; 
@@ -57,14 +62,85 @@ thead tr{
 tbody tr{
     display: flex; 
     flex-direction: column; 
-    
 }
-
-
 
 .flex{
     display: flex;
 }
+
+.of-form-upload__table-mobile thead tr{
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
+    border-color:  #cdc5c5 ;
+    border-width: 1px;
+    border-style: solid;
+    margin-bottom: 10px;
+    
+}
+
+.of-form-upload__table-mobile th:not(:last-child) {
+    border-bottom: 1px solid #cdc5c5;
+}
+
+.of-form-upload__table-mobile tbody tr {
+    border-top-right-radius: .5rem;
+    border-bottom-right-radius: .5rem;
+    border-color: #cdc5c5;
+    border-width: 1px;
+    border-style: solid;
+    margin-bottom: 10px;
+    border-left: none;
+}
+
+.of-form-upload__table-mobile td {
+    /* border-width: 1px;
+    border-color: #cdc5c5;
+    border-style: solid;
+    border-left: 0; */
+    max-width: none;
+    padding-left: 10px;
+    border-bottom: 1px solid #cdc5c5;
+    border-left: none;
+}
+.of-form-upload__table-mobile td:last-child {
+    border-bottom: 0;
+}
+
+.of-form-upload__table-h-center{
+    display: flex;
+    justify-content: center;
+
+}
+
+.of-form-upload__table-actions{
+    display: flex;
+    column-gap: 25px;
+    align-items: center;
+}
+
+.of-form-upload__add{
+    display: flex;
+    justify-content: center;
+}
+
+.of-form-upload__upload{
+    display: flex;
+    justify-content: center;
+}
+
+.of-form-upload__sign{
+    display: flex; 
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.of-form-upload__upload-container{
+    margin-bottom: 20px;
+}
+
+.of-form-upload__table-mobile tbody{
+    flex: 1 1 0;
+} 
 
 
 
@@ -88,5 +164,14 @@ tbody tr{
 
     thead tr:not(:first-child) {
       display: none;
+    }
+  }
+
+  @media (max-width: 768px){
+    .mobile-card{
+        box-shadow: rgba(0, 0, 0, 0.35) 2px 3px 6px;
+        border: #cac1c1 solid 1px;
+        border-radius: 0.25rem;
+        padding: 0.5rem
     }
   }
