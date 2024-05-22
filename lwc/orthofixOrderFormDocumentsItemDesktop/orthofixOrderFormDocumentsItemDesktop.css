@@ -10,7 +10,6 @@
     }
 }
 .button-margin{
-    background-color: #0b5cab !important;
     /* margin-bottom: 130px; */
     color: white;
     text-align: center;
@@ -53,21 +52,28 @@
 }
 
 
-thead tr{
+
+
+
+thead tr, tbody tr{
     display: flex; 
     flex-direction: column; 
-
-}
-
-
-tbody tr{
-    display: flex; 
-    flex-direction: column; 
+    justify-content: center;
 }
 
 .flex{
     display: flex;
+    justify-content: space-around;
 }
+
+ .flex-column{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    gap: 3.5rem;
+}
+
 
 .of-form-upload__table-mobile thead tr{
     border-top-left-radius: .5rem;
