@@ -211,6 +211,21 @@
                                             selected-values={selectedDocumentTypes} label="Document Type"
                                             class="other-required"></c-orthofix-generic-multi-select-pick-list>
                                         <!-- </div> -->
+                                        <div class="slds-p-around_small slds-truncate" title="">
+                                            <template lwc:if={disableCheckeboxes}>
+                                                <button type="button" title="Upload Documents" onclick={showFileUploadModal}
+                                                    class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small">UPLOAD
+                                                    DOCUMENTS
+                                                </button>
+                                            </template>
+                                            <template lwc:else>
+                                                <button type="button" title="Upload Documents" onclick={showFileUploadModal}
+                                                    class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small button-margin">UPLOAD
+                                                    DOCUMENTS
+                                                </button>
+                                            </template>
+                                            </button>
+                                        </div>
 
 
 

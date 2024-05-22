@@ -15,6 +15,7 @@ export default class OrthofixOrderFormInsuranceItem extends LightningElement {
     @api isChecked;
     @track toggleChecked = false;
     @track accordionClass = 'slds-section'; //this starts as section open
+    @track makedisabled = false;
 
     @api objectName;
 
@@ -66,6 +67,9 @@ export default class OrthofixOrderFormInsuranceItem extends LightningElement {
     }
 
     handleAddToFavoritesClick() {
+        console.log('this.editedData.primary.carrier.name' , this.editedData.primary.carrier.name);
+        console.log('this.editedData.primary.carrier.name' , this.editedData.secondary.carrier.name);
+        console.log('this.editedData.primary.carrier.name' , this.editedData.tertiary.carrier.name);
         checkFavInsurance({insuranceCarrier : this.editedData.primary.carrier.name})
             .then((result) =>{
                 if(result){
@@ -100,10 +104,19 @@ export default class OrthofixOrderFormInsuranceItem extends LightningElement {
     handleInputChange(event){
         let name =  this.objectName+'.'+event.target.name;
         let value = event.target.value;
+        // let relationShipPatientName = `${this.objectName}.insured.relationshipToPatient`;
         
         if (name === 'insuranceType') {
             this.requiredFields.insurance.carrier.phone = this.isPhoneNumberOptional;
         }
+
+        // console.log('relationShipPatientName', relationShipPatientName);
+        // console.log('name', name);
+        // if(name === relationShipPatientName){
+        //     console.log('inside cond');
+        //     this.requiredFields.insurance.insured.firstName = this.isFirstNameLastNameOptional;
+        //     this.requiredFields.insurance.insured.lastName = this.isFirstNameLastNameOptional;
+        // }
         this.dispatchEvent(new CustomEvent(
             'inputchange', {
                 bubbles : true, composed : true,
@@ -158,6 +171,19 @@ export default class OrthofixOrderFormInsuranceItem extends LightningElement {
         }else return true;
     }
 
+    // get isFirstNameLastNameOptional(){
+    //     console.log('inside isFirstNameLastNameOptional ');
+        
+    //     let optionalRelationShipPatient = ['Employer'];
+    //     let relationshipToPatient = this[this.objectName].insured.relationshipToPatient;
+    //     console.log('relationshiptoPatient', relationshipToPatient);
+    //     let isOptional = optionalRelationShipPatient.includes(relationshipToPatient);
+    //     console.log('isOptional >>1', isOptional);
+    //     if(isOptional){
+    //         return false;
+    //     }else return true;
+    // }
+
 
 
     handleKeyDown(event) {
@@ -180,11 +206,29 @@ export default class OrthofixOrderFormInsuranceItem extends LightningElement {
             this.template.querySelector('lightning-input[data-name="insured.birthDate"]').value = patientInformation.birthDate;
             this.dispatchEvent(new CustomEvent('inputchange', {bubbles : true, composed : true, detail: {fieldName: this.objectName+'.'+'insured.birthDate', value: patientInformation.birthDate}}));
         }
+        console.log('event.target.name', event.target.name);
+        console.log('value', value);
         if(event.target.name==='insured.relationshipToPatient' && value!='Self'){
             this.template.querySelector('lightning-input[data-name="insured.firstName"]').value="";
             this.template.querySelector('lightning-input[data-name="insured.lastName"]').value="";
             this.template.querySelector('lightning-input[data-name="insured.birthDate"]').value ="";
         }
+        // if(event.target.name ==='insured.relationshipToPatient' && value === 'Employer'){
+        //     console.log('inside cond');
+        //     // this.template.querySelector('lightning-input[data-name="insured.firstName"]').value="";
+        //     // this.template.querySelector('lightning-input[data-name="insured.lastName"]').value="";
+        //     // this.template.querySelector('lightning-input[data-name="insured.birthDate"]').value ="";
+        //     this.requiredFields.insurance.insured.firstName = false
+        //     this.requiredFields.insurance.insured.lastName = false
+        //     this.requiredFields.insurance.insured.birthDate = false
+            
+        //     this.makedisabled = true
+        // }else{
+        //     this.requiredFields.insurance.insured.firstName = true
+        //     this.requiredFields.insurance.insured.lastName = true
+        //     this.requiredFields.insurance.insured.birthDate = true
+        //     this.makedisabled = false
+        // }
     }
 
     handleAddressChange(event){

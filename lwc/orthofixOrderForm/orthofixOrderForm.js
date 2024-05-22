@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Lokesh Kesava | lokesh.kesava@argano.com
  * @group             :
- * @last modified on  : 05-06-2024
+ * @last modified on  : 05-21-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
  **/
 import {api, track, LightningElement, wire} from 'lwc';
@@ -1190,7 +1190,8 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
             }
 
            
-
+            console.log('fieldName', fieldName);
+            console.log('detail.value', detail.value);
             
             
             //type 
