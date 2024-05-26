@@ -1,0 +1,546 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 05-16-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+        <div class="mobile-card">
+            <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+                <div class="slds-line">
+                    <span class="slds-text-heading_small custom-bold">
+                        Clinical Documentation
+                    </span>
+                    </br>
+                    <span class="slds-text-body_regular">
+                        Please ensure that the Imaged Information is an identical replication of all pages of the paper
+                        document in every way
+                    </span>
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+                <table
+                    class="slds-show_medium scm-modified-prev-class slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered"
+                    aria-label="">
+
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="thstyle" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title="">Submitted</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title="">Documentation</div>
+                            </th>
+                            <th class="thstyle" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title="">Document Type</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title="">Submitted By</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title="">Submitted Date/Time</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title="">View</div>
+                            </th>
+                            <th class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title=""></div>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <template for:each={orderFiles} for:item="file">
+                            <tr key={file.id} class="slds-hint-parent">
+                                <td>
+                                    <div class="slds-p-around_small slds-truncate" title="">
+                                        <!-- <lightning-button-icon class="icon-class" icon-name='utility:check' alternative-text='check'
+                                                        variant='success' size='x-small'
+                                                        title='check'></lightning-button-icon> -->
+                                        <lightning-icon class="icon-class" icon-name={file.icon} alternative-text='Submited'
+                                            variant={file.variant} size='small' title='success'></lightning-icon>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="slds-p-around_small slds-truncate" title="">
+                                        {file.Title}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="slds-p-around_small slds-truncate" title="">
+                                        {file.docType}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="slds-p-around_small slds-truncate" title="">
+                                        {file.Owner.Name}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="slds-p-around_small slds-truncate" title="">
+                                        <!-- <lightning-formatted-date-time value={file.CreatedDate}></lightning-formatted-date-time> -->
+                                        <lightning-formatted-date-time value={file.CreatedDate} year="numeric"
+                                            month="numeric" day="numeric" hour="2-digit" minute="2-digit" time-zone="PST"
+                                            time-zone-name="short" hour12=true></lightning-formatted-date-time>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="slds-p-around_small slds-truncate" title="">
+                                        <lightning-button-icon icon-name='utility:preview' alternative-text='preview'
+                                            variant='error' size='x-small' title='delete' onclick={filePreview}
+                                            value={file.ContentDocumentId}></lightning-button-icon>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="slds-p-around_small slds-truncate" title="">
+                                        <lightning-button-icon class="icon-class-delete" icon-name='utility:delete'
+                                            alternative-text='delete' variant='error' size='x-small' title='delete'
+                                            disabled={clinicalDisableForm} onclick={handleFileDelete}
+                                            value={file.Id}></lightning-button-icon>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                        <template if:true={isSubmittedToIA}>
+                            <template for:each={mainDeficiencies} for:item="file">
+                                <tr key={file.id} class="slds-hint-parent">
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+                                            <lightning-icon icon-name="utility:close" alternative-text='close'
+                                                variant="error" size='x-small' title='close'></lightning-icon>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+                                            {file}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+                                            <lightning-button disabled={disableCheckeboxes}
+                                                class="slds-button slds-button_stretch " variant="brand"
+                                                label="UPLOAD DOCUMENT" onclick={showFileUploadModal}
+                                                title="Upload Documents"></lightning-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                            <template for:each={lomnDeficiencies} for:item="file">
+                                <tr key={file.id} class="slds-hint-parent">
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+                                            <lightning-icon icon-name="utility:close" alternative-text='close'
+                                                variant="error" size='x-small' title='close'></lightning-icon>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+                                            {file}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+                                            <template lwc:if={disableCheckeboxes}>
+                                                <button type="button" title="Upload Documents" onclick={showFileUploadModal}
+                                                    class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small">UPLOAD
+                                                    DOCUMENTS
+                                                </button>
+                                            </template>
+                                            <template lwc:else>
+                                                <button type="button" title="Upload Documents" onclick={showFileUploadModal}
+                                                    class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small button-margin">UPLOAD
+                                                    DOCUMENTS
+                                                </button>
+                                            </template>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-p-around_small slds-truncate" title="">
+                                            <button type="button"
+                                                class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small"
+                                                disabled={disableCheckeboxes} onclick={generate}>Generate & Sign LOMN
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                        <tr class="slds-line-height_reset">
+                            <td class="" scope="col" colspan="5">
+                                <div class="slds-p-around_small slds-truncate" title=""></div>
+                            </td>
+                        </tr>
+                        <tr class="slds-hint-parent slds-show_medium scm-modified-prev-class">
+
+                            <td colspan="2">
+                                <span class="slds-text-body_regular">
+                                    Document Upload
+                                    <!-- (Please check all that are included) -->
+                                </span>
+                                <div class="slds-p-around_small " title="">
+                                    <div class="slds-form-element">
+
+                                        <!-- <div class="slds-p-horizontal_small slds-truncate">  -->
+                                        <c-orthofix-generic-multi-select-pick-list onselectoption={handleSelectOptionList}
+                                            options={sortedPicklistOptions} selected-values={selectedDocumentTypes}
+                                            label="Document Type" class="required"></c-orthofix-generic-multi-select-pick-list>
+                                        <!-- </div> -->
+
+
+
+
+                                        <!-- <div class="slds-form-element__control">
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" name="docType"
+                                                            label="Patient Demographics" onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" name="docType" label="Insurance Information"
+                                                            onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" name="docType" label="Clinical Notes"
+                                                            onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                        
+                                        <div class="slds-clear"></div>
+                                    </div> -->
+
+                                        <!-- <div class="slds-form-element__control">
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input name="Prescription" class="" type="checkbox"
+                                                            label="Prescription"
+                                                            required={disablerequiredforPrecriptionCheck}
+                                                            onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" label="Op Report"
+                                                            onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" label="MMR"
+                                                            onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" label="DCS" onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" label="Fracture Gap"
+                                                            onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                    </div> -->
+
+
+
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                                <template if:true={showOtherMultiSelect}>
+                                                    <!-- <c-orthofix-generic-multi-select-pick-list
+                                                        onselectoption={handleSelectOtherOptionList}
+                                                        options={picklistOptions.otherdoctype}
+                                                        selected-values={selectedDocumentOtherTypes}
+                                                        label="Other Document Type"></c-orthofix-generic-multi-select-pick-list> -->
+                                                        <div class="slds-float_left slds-p-right_small">
+                                                            <lightning-input type="text"
+                                                                            label="Other Document Type"
+                                                                            name="other"
+                                                                            value={docTypeOther}
+                                                                            required={otherRequired}
+                                                                            onchange={handleInputChange}
+                                                                            max-length=100
+                                                            ></lightning-input>
+                                                        </div>
+                                                </template>
+                                            </div>
+                                            <!-- <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" label="CMN"  onchange={docTypeChange}></lightning-input>
+                                        </div> -->
+                                            <!-- <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" label="LOMN" onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div> -->
+                                        </div>
+
+                                        <!-- <div class="slds-form-element__control">
+                                        <div class="slds-float_left slds-p-top_small slds-p-right_small">
+                                            <lightning-input class="" type="checkbox" label="Other" onchange={docTypeChange}
+                                                            disabled={disableCheckeboxes}></lightning-input>
+                                        </div>
+                                        <template if:true={otherRequired}>
+                                            <div class="slds-float_left slds-p-right_small">
+                                                <lightning-input type="text"
+                                                                label=""
+                                                                name="other"
+                                                                value={docTypeOther}
+                                                                required={otherRequired}
+                                                                onchange={handleInputChange}
+                                                                disabled={otherDisabled}
+                                                                max-length=100
+                                                ></lightning-input>
+                                            </div>
+                                        </template>
+                                    </div> -->
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="slds-p-around_small slds-truncate" title=""></div>
+                            </td>
+                            <td>
+                                <div class="slds-p-around_small slds-truncate" title=""></div>
+                            </td>
+                            <td>
+                                <div class="slds-p-around_small slds-truncate" title="">
+                                    <!-- <lightning-button disabled={disableCheckeboxes}
+                                                class="slds-button slds-button_stretch   button-margin" variant="brand"
+                                                label="UPLOAD DOCUMENTS" title="Upload Documents"
+                                                onclick={showFileUploadModal}></lightning-button> -->
+                                    <!-- <button type="button"  disabled={disableUploadDocuments} onclick={showFileUploadModal}>UPLOAD DOCUMENTS</button> -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="slds-line-height_reset">
+                            <td class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title=""></div>
+                            </td>
+                            <td class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title="">
+                                </div>
+                            </td>
+                            <td class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title=""></div>
+                            </td>
+                            <td class="" scope="col">
+                                <div class="slds-p-around_small slds-truncate" title=""></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="of-form-upload__table-mobile slds-hide_medium slds-table_cell-buffer slds-no-row-hover of-document-upload-table flex"
+                    aria-label="">
+                    <thead class="test-scm">
+                        <template for:each={orderFiles} for:item="file">
+                            <tr key={file.id}>
+                                <th height="52px" class="of-form-upload__table-h-center slds-p-around_medium slds-truncate slds-line-height_heading" scope="col">Submitted</th>
+                                <th height="48px" class="of-form-upload__table-h-center slds-p-around_medium slds-truncate slds-line-height_heading" scope="col">Submitted By</th>
+                                <th height="48px" class="of-form-upload__table-h-center slds-p-around_medium slds-truncate slds-line-height_heading" scope="col">Date</th>
+                                <th height="48px" width="120px" class="of-form-upload__table-h-center slds-p-around_medium slds-truncate slds-line-height_heading" scope="col">Document Type</th>
+                                <th height="52px" class="of-form-upload__table-h-center slds-p-around_medium slds-truncate slds-line-height_heading" scope="col">
+                                    <!-- <lightning-button-icon icon-name='utility:preview' alternative-text='preview'
+                                    variant='error' size='x-small' title='preview' onclick={filePreview}
+                                    value={file.ContentDocumentId}></lightning-button-icon> -->
+                                    <!-- <span>Actions</span> -->
+                                </th>
+                            </tr>
+                        </template>
+                    </thead>
+                    <tbody>
+                        <template for:each={orderFiles} for:item="file">
+                            <tr key={file.id} class=" of-form-upload__table-v-center slds-hint-parent">
+                                <td height="52px" class="slds-p-around_medium slds-truncate slds-line-height_heading">
+                                    <lightning-icon  class="icon-class" icon-name={file.icon} alternative-text='Submited'
+                                        variant={file.variant} size='small' title='success'>
+                                    </lightning-icon>
+                                </td>
+                                <td height="48px" class="slds-p-around_medium slds-truncate slds-line-height_heading">{file.Owner.Name}</td>
+                                <td height="48px" class="slds-p-around_medium slds-truncate slds-line-height_heading">
+                                    <lightning-formatted-date-time value={file.CreatedDate}></lightning-formatted-date-time>
+                                </td>
+                                <td height="48px" class="slds-p-around_medium slds-truncate slds-line-height_heading">{file.docType}</td>
+                            <!-- </tr> -->
+                            <!-- <tr key={file.id}> -->
+                                <td height="52px" class=" of-form-upload__table-actions slds-p-around_medium slds-truncate row-actions" rowspan="2">
+                                    <lightning-button-icon icon-name='utility:preview' alternative-text='preview'
+                                    variant='error' size='large' title='preview' onclick={filePreview}
+                                    value={file.ContentDocumentId}></lightning-button-icon>
+                                    <lightning-button-icon class="icon-class-delete slds-size_full slds-line-height_heading" icon-name='utility:delete'
+                                        alternative-text='delete' variant='error' size='large' title='delete'
+                                        disabled={clinicalDisableForm} onclick={handleFileDelete}
+                                        value={file.Id}></lightning-button-icon>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+
+
+
+                </table>
+
+                <div class=" of-form-upload__add slds-hide_medium slds-p-around_small">
+                    <button type="button" class="slds-button slds-button_outline-brand slds-p-around_x-small custom-bold"
+                        style="border: 2px solid rgb(1 118 211);" onclick={showFileUploadMobile}>{addFileButtonLabel}
+                    </button>
+                </div>
+
+
+                <table
+                    class="slds-show_medium scm-modified-prev-class slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered"
+                    aria-label="">
+                    <tr class="slds-line-height_reset">
+                        <td class="" scope="col">
+                            <div class="slds-p-around_small slds-truncate" title=""></div>
+                        </td>
+                        <td class="" scope="col">
+                            <div class="slds-p-around_small slds-truncate" title="">
+                                <!-- <lightning-button disabled={disableCheckeboxes}
+                                                class="slds-button slds-button_stretch   button-margin" variant="brand"
+                                                label="UPLOAD DOCUMENTS" title="Upload Documents"
+                                                onclick={showFileUploadModal}></lightning-button> -->
+                                <template lwc:if={disableCheckeboxes}>
+                                    <button type="button" title="Upload Documents" onclick={showFileUploadModal}
+                                        class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small"
+                                        disabled={disableCheckeboxes}>UPLOAD DOCUMENTS
+                                    </button>
+                                </template>
+                                <template lwc:else>
+                                    <button type="button" title="Upload Documents" onclick={showFileUploadModal}
+                                        class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small button-margin">UPLOAD
+                                        DOCUMENTS
+                                    </button>
+                                </template>
+                            </div>
+                        </td>
+                        <td class="" scope="col">
+                            <div class="slds-p-around_small slds-truncate" title="">
+                                <button type="button"
+                                    class="slds-button slds-button_neutral slds-button_stretch custom-bold slds-p-around_xx-small"
+                                    disabled={disableCheckeboxes} onclick={generate}>Generate & Sign LOMN
+                                </button>
+                            </div>
+                        </td>
+                        <td class="" scope="col">
+                            <div class="slds-p-around_small slds-truncate" title=""></div>
+                        </td>
+                        <td class="" scope="col">
+                            <div class="slds-p-around_small slds-truncate" title=""></div>
+                        </td>
+                    </tr>
+                </table>
+                <template if:true={isShowFileUploadMobile}>
+                    <div class="of-form-upload__upload-container">
+
+                    <div class="slds-p-around_small slds-hide_medium" title="">
+                        <div class="slds-form-element">
+                
+                            <!-- <div class="slds-p-horizontal_small slds-truncate">  -->
+                            <c-orthofix-generic-multi-select-pick-list onselectoption={handleSelectOptionList}
+                                options={sortedPicklistOptions} selected-values={selectedDocumentTypes}
+                                label="Document Type" class="required"></c-orthofix-generic-multi-select-pick-list>
+                            <div class="slds-form-element__control">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                                    <template if:true={showOtherMultiSelect}>
+                                        <div class="slds-float_left slds-p-right_small">
+                                            <lightning-input type="text"
+                                                            label="Other Document Type"
+                                                            name="other"
+                                                            value={docTypeOther}
+                                                            required={otherRequired}
+                                                            onchange={handleInputChange}
+                                                            max-length=100
+                                            ></lightning-input>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <template if:true={selectedValueList}>
+                        <div  class="of-form-upload__upload sm-buttons-container slds-hide_medium">
+                            <div class="slds-p-around_small">
+                                <button type="button" onclick={showFileUploadModal}
+                                    class="slds-button slds-button_outline-brand slds-p-around_x-small custom-bold"
+                                    style="border: 2px solid rgb(1 118 211);">UPLOAD DOCUMENTS
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                </template>
+            </div>
+        </div>  
+            <div  class=" of-form-upload__sign sm-buttons-container slds-hide_medium slds-border_top">
+                <!-- <div class="slds-p-around_small"> -->
+                    <button type="button"
+                        class="slds-button slds-button_outline-brand slds-p-around_x-small custom-bold"
+                        onclick={generate}>Generate & Sign LOMN
+                    </button>
+                <!-- </div> -->
+            </div>
+            
+      
+        
+        
+
+        <div class="slds-grid slds-wrap slds-p-bottom_medium slds-p-top_large">
+            <template if:true={isShowModal}>
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                    aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+
+                        <!-- modal body start -->
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <iframe src={formTitanUrl} allowtransparency="true" frameborder="0" style="width: 100%;"
+                                height="700" scrolling="no"></iframe>
+                        </div>
+
+                        <!-- modal footer start-->
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral" onclick={hideModal}>Cancel</button>
+                        </footer>
+                    </div>
+                </section>
+            </template>
+        </div>
+    </div>
+
+    <template if:true={isShowFileUploadModal}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-02"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate">Upload Documents</h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+                    <lightning-input type="file" accept=".xlsx, .xls, .csv, .png, .doc, .docx, .pdf" label="Attachment"
+                        onchange={openfileUpload}></lightning-input>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={hideFileUploadModal}>Cancel</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+</template>

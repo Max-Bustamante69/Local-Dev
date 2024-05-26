@@ -1,0 +1,72 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 04-19-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+
+<template>
+        <div class="modalclass">
+        <div class="slds-text-align_center slds-text-heading_medium" style="height: 3rem;">Cancel Order</div>
+        <lightning-record-edit-form  object-api-name="Order" onsubmit={handleSubmit}>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_12-of-12">
+                    <div class="slds-p-around_x-small slds-m-right_large">
+                        <lightning-input-field 
+                        field-name="CancellationReason__c" 
+                        onchange={handleReasonChange} 
+                        required>
+                    </lightning-input-field>
+                    </div>
+                </div>
+                
+                <template if:true={showContactPhysician}>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_12-of-12">
+                    <div class="slds-p-around_x-small slds-m-right_large">
+                        <lightning-input  
+                            field-name="IncorrectPHI__c"  
+                            type="checkbox" 
+                            name="contactPhysician" 
+                            label="I agree to contact the physician to inform them of this cancellation." 
+                            value={IncorrectPHI}
+                            onchange={contactPhysician} 
+                            required={showContactPhysician}
+                        ></lightning-input>
+                        
+                    </div>
+                </div>
+            </template>
+                
+                
+                <template if:true={showOtherReason}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+                        <div class="slds-p-around_x-small slds-m-right_large">
+                            <lightning-input
+                            type="text"
+                            name="otherReason"
+                            label="Please Specify A Reason"
+                            placeholder="Please Specify A Reason"
+                            value={otherReason}
+                            required
+                            onchange={handleOtherReason}>
+                        </lightning-input>
+                    </div>
+                    </div>
+                </template>
+                
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+                    <div class="slds-p-around_x-small slds-m-right_small">
+                        <lightning-button
+                            class="slds-float_right"
+                            variant="brand"
+                            type="submit"
+                            label="Cancel Order">
+                        </lightning-button>
+                    </div>
+                </div>
+            </div>
+        </lightning-record-edit-form>
+    </div>
+
+</template>

@@ -1,0 +1,18 @@
+:host{
+    font-size: 0.875rem;
+}
+
+.app-link-button {
+    color: #209add;
+    /* color: #dd202a; */
+    cursor: pointer;
+}
+
+.wrapper{
+    position: relative;
+}
+
+.wrapper div{
+    position: absolute;
+    top: 0;
+}

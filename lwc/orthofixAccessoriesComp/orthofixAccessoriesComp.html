@@ -1,0 +1,48 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 05-24-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="product-information">
+        <div class="devices">
+            <template for:each={deviceList} for:item="device" for:index="index">
+                <div key={device.id} class="slds-grid slds-gutters">
+                    <lightning-combobox class="slds-p-around_medium" name="modelNumber"
+                                        label="Model Number"
+                                        value={device.modelNumber}
+                                        required
+                                        options={accessoriesOptions}
+                                        onchange={handleModelChange}>
+                    </lightning-combobox>
+                    <lightning-input class="slds-p-around_medium" type="number"
+                                     name="quantity"
+                                     label="QTY (40 MAX)"
+                                     max="40"
+                                     required
+                                     value={device.quantity}
+                                     onchange={handleQuantityChange}>
+                    </lightning-input>
+                    <lightning-button-icon class="slds-p-around_medium slds-m-top_large"
+                    icon-name="utility:delete"
+                                           alternative-text="Delete"
+                                           title="Delete"
+                                           onclick={deleteDeviceRow}
+                                           data-id={index}>
+                    </lightning-button-icon>
+                    <lightning-button class="slds-p-around_medium slds-m-top_large" label="Add Accessories"
+                                        title="Add Accessories"
+                                        onclick={addDeviceRow}
+                                        >
+                                        <!-- disabled={isAddButtonDisabled} -->
+                    </lightning-button>
+                </div>
+            </template>
+           
+        </div>
+        
+       
+    </div>
+</template>

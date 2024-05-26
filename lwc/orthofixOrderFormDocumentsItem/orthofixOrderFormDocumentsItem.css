@@ -1,0 +1,33 @@
+@import 'c/orthofixSharedStyles';
+
+.test-scm{
+    color: red;
+}
+
+.of-document-upload-table th, .of-document-upload-table td {
+    max-width: 27vw;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.of-document-upload-table th > div, .of-document-upload-table td > div {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+  @media (min-width: 640px) {
+    table {
+      display: inline-table !important;
+    }
+
+    thead tr:not(:first-child) {
+      display: none;
+    }
+  }
+
+  td:not(:last-child) {
+    border-bottom: 0;
+  }
+
+  th:not(:last-child) {
+    border-bottom: 2px solid rgba(0, 0, 0, .1);
+  }

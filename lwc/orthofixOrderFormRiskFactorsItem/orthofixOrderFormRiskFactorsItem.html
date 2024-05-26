@@ -1,0 +1,57 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 03-12-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="slds-grid slds-wrap">
+
+        <div class="slds-col slds-size_12-of-12">
+            <lightning-input
+                    label={title}
+                    name={title}
+                    type="checkbox"
+                    checked={toggleChecked}
+                    onchange={changeToggle}
+                    disabled={clinicalDisableForm}
+            ></lightning-input>
+        </div>
+
+        <template if:true={other}>
+            <div class="slds-col slds-size_8-of-12">
+                <div class="slds-p-around_x-small">
+                    <template if:true={toggleChecked}>
+                        <lightning-textarea
+                                label="DESCRIPTION"
+                                name="riskFactorsOther"
+                                required="true"
+                                value={formData.riskFactorsOther}
+                                onchange={handleInputChange}
+                                disabled={clinicalDisableForm}
+                        >
+                        </lightning-textarea>
+                    </template>
+                </div>
+            </div>
+        </template>
+        <template if:true={showBmi}>
+            <template if:true={toggleChecked}>
+                <div class="slds-col slds-size_3-of-12">
+                    <div class="slds-p-around_x-small">
+                        <lightning-input
+                                label="BMI"
+                                name="bmi"
+                                value={formData.bmi}
+                                onchange={handleInputChange}
+                                disabled={clinicalDisableForm}
+                        >
+                        </lightning-input>
+                    </div>
+                </div>
+            </template>
+        </template>
+
+    </div>
+</template>

@@ -1,0 +1,196 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 05-23-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="slds-tabs_default js-tabset forceCommunityTabLayout">
+    <lightning-spinner if:true={loaderStatus} alternative-text="Loading" size="medium"
+        class="slds-align_absolute-center">
+    </lightning-spinner>
+    <template if:false={isCommunity}>
+    <template if:true={showheader}>
+        <!-- Sticky Header -->
+        <div class="slds-col slds-size_6-of-6 mobile-hide" style="padding-left: 15px;">
+            <lightning-formatted-rich-text style="font-size: 20px" value={headerText}></lightning-formatted-rich-text>
+            <!-- <h1 style="font-size: 20px;"><b>{headerText}</b></h1> -->
+        </div>
+
+    </template>
+</template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_4-of-4">
+            <template if:false={isCommunity}>
+            <template if:false={showheader}>
+                <div class="slds-text-heading_large slds-p-around_small">{formData.patientInformation.productType}™ -
+                    {formData.patientInformation.firstName} {formData.patientInformation.lastName}</div>
+                <div class="slds-text-heading_small slds-p-around_small">
+                    <span>Status: {formData.patientInformation.status} </span>
+                    <span style="padding-left: 5px;">Account No.: {formData.patientInformation.patientNumber} </span>
+                    <span style="padding-left: 5px;">Sales REP: {formData.patientInformation.salesRep}</span>
+                    <template if:true={showOktofit}>
+                        <lightning-formatted-rich-text style="padding-left: 20px;"
+                            value={oktofitIcon}></lightning-formatted-rich-text>
+                    </template>
+                </div>
+            </template>
+        </template>
+
+            <lightning-tabset active-tab-value={activeTab} class="green-icon">
+
+                <lightning-tab label="PATIENT INFORMATION" end-icon-name={patientIcon} value="patientTab"
+                    onactive={handleActive} class={iconClass}>
+                    <c-orthofix-order-form-patient-information form-data={formData} picklist-options={picklistOptions}
+                        required-fields={requiredFields} oninputchange={handleGenericInputChange}
+                        show-add-favorite-button={showAddFavoriteButton} disable-form={disableForm} address-contact-rectype={addressContactRecordType} phone-contact-rectype={phoneContactRecordType}>
+                    </c-orthofix-order-form-patient-information>
+                </lightning-tab>
+                <lightning-tab label="INSURANCE" end-icon-name={insuranceIcon} title="2nd tab extended title"
+                    value="insuranceTab" onactive={handleActive}>
+                    <c-orthofix-order-form-insurance form-data={formData} edited-data={editedData}
+                        picklist-options={picklistOptions} required-fields={requiredFields}
+                        oninputchange={handleGenericInputChange}
+                        show-add-favorite-insurance-button={showAddFavoriteInsuranceButton} disable-form={disableForm}>
+                    </c-orthofix-order-form-insurance>
+                </lightning-tab>
+
+                <lightning-tab label="CLINICAL INFORMATION" end-icon-name={clinicalIcon} value="clinicalTab"
+                    onactive={handleActive}>
+                    <c-orthofix-order-form-clinical-information form-data={formData} edited-data={editedData}
+                        picklist-options={picklistOptions} required-fields={requiredFields} product-type={productType}
+                        oninputchange={handleGenericInputChange} oninputchangediagnosis={handleDiagnosisInputChange}
+                        oninputchangeriskfactors={handleRiskfactorsInputChange}
+                        onmultiselectchange={handleMultiSelectChange} clinical-disable-form={clinicalDisableForm}
+                        oncheckboxchange={handlePrescriptionCheck} order-canceled={orderCanceled}>
+                    </c-orthofix-order-form-clinical-information>
+                </lightning-tab>
+                <template if:true={showSchAppitmentAndFittingTab}>
+                    <lightning-tab label="SCHEDULE APPOINTMENT" value="scheduleAppointmentTab" onactive={handleActive}>
+                        <c-orthofix-order-form-schedule-appointment form-data={formData} edited-data={editedData}
+                            picklist-options={picklistOptions} make-event-read-only={makeEventReadOnly}
+                            required-fields={requiredFields}
+                            oninputchange={handleGenericInputChange}></c-orthofix-order-form-schedule-appointment>
+
+                    </lightning-tab>
+
+
+                    <!-- Tab 3: Patient Fitting -->
+                    <lightning-tab label="PATIENT FITTING">
+                        <c-orthofix-order-form-titan-container record-id={recordId}>
+
+                        </c-orthofix-order-form-titan-container>
+                    </lightning-tab>
+                </template>
+            </lightning-tabset>
+
+            <div class="slds-grid slds-wrap button-mobile-class">
+                <template if:true={hideAllButtons}>
+                    <template if:false={hideSaveButtons}>
+
+
+                        <template if:true={showSaveContinue}>
+                            <div
+                                class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                                <button type="button" class="slds-button  slds-button_stretch"
+                                    style="border-color: #009add ; color:#009add" onclick={handleSave}>Save</button>
+                            </div>
+                            <div
+                                class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                                <button type="button" class="slds-button  slds-button_stretch"
+                                    style="color:#FFFFFF;background:#009add " onclick={handleSaveContinue}>Save And
+                                    Continue</button>
+                            </div>
+                            <template if:true={shouldShowCancelButton}>
+                            <div
+                                class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                                <button type="button"
+                                    class="slds-button  slds-button_stretch slds-button_outline-brand slds-button_stretch"
+                                    style="border-color: #E74C3C;color:#E74C3C"
+                                    onclick={handleCancelAfterSubmit}>Cancel</button>
+                            </div>
+                        </template>
+                        </template>
+                        <template if:true={showSaveAndSubmit}>
+                            <div
+                                class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                                <button type="button" class="slds-button  slds-button_stretch"
+                                    style="border-color: #009add ; color:#009add" onclick={handleSave}>Save</button>
+                            </div>
+                            <div
+                                class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                                <button type="button" class="slds-button slds-button_success slds-button_stretch"
+                                    style="color:#FFFFFF;background:#009add" onclick={handleSubmitToIA}>Submit to
+                                    IA</button>
+                            </div>
+                            <template if:true={shouldShowCancelButton}>
+                            <div
+                                class="slds-col slds-p-around_medium slds-size_12-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                                <button type="button"
+                                    class="slds-button  slds-button_stretch slds-button_outline-brand slds-button_stretch "
+                                    style="border-color: #E74C3C;color:#E74C3C"
+                                    onclick={handleCancelAfterSubmit}>Cancel</button>
+                            </div>
+                        </template>
+                        </template>
+
+
+
+                    </template>
+                    <template if:true={hideSaveButtons}>
+                        <template if:false={showSubmit}>
+                            <template if:true={shouldShowCancelButton}>
+                            <div class="slds-col slds-p-around_medium">
+                                <button class="slds-button slds-button_stretch slds-button_neutral  slds-align_absolute-center"
+                                    onclick={handleCancelAfterSubmit}>Cancel</button>
+                            </div>
+                        </template>
+                        </template>
+
+                        <template if:true={showSubmit}>
+                            <div class="slds-col  slds-p-around_medium">
+                                <button type="button"
+                                    class="slds-button  slds-button_stretch slds-button_outline-brand slds-align_absolute-center"
+                                    style="color:#FFFFFF;background:#009add"
+                                    onclick={handleSubmitSchAppointment}>Submit</button>
+                            </div>
+                        </template>
+                    </template>
+
+                </template>
+            </div>
+
+        </div>
+
+    </div>
+
+    <template if:true={showCancelModal}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={hideModalBox}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+                            size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </header>
+
+                <!-- modal body start -->
+                <div class="slds-modal__content slds-p-around_small" id="modal-content-id-1">
+                    <c-cancel-order-modal record-id={recordId} onhidemodal={showCancelModal}></c-cancel-order-modal>
+                </div>
+
+                <!-- modal footer start-->
+                <!-- <footer class="slds-modal__footer">
+                  <button class="slds-button slds-button_neutral" onclick={hideModalBox}>Cancel</button>
+               </footer> -->
+
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    </div>
+</template>

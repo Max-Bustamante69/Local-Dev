@@ -1,0 +1,57 @@
+<template>
+    <div class="slds-grid slds-wrap slds-p-top_medium">
+        <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+            <div class="slds-line">
+                <span class="slds-text-heading_small custom-bold">
+                    Clinical Information
+                </span>
+                <span style="color:red;" class="slds-text-heading_small custom-bold slds-p-left_small">
+                    Ensure the Imaged Information is an identical replication of all pages of the paper document in
+                    every way
+                </span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+            <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered of-document-upload-table" aria-label="">
+                <thead class="test-scm test-scm2">
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <div class="slds-p-around_small slds-truncate" title="">Documentation</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-p-around_small slds-truncate" title="">Submitted By</div>
+                        </th>
+                        <th class="" scope="col">
+                            <div class="slds-p-around_small slds-truncate" title="">Date</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <template for:each={orderFiles} for:item="file">
+                        <tr key={file.id} class="slds-hint-parent ">
+                            <td>
+                                <div class="slds-p-around_small slds-truncate" title="">
+                                    {file.Title}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="slds-p-around_small slds-truncate" title="">
+                                    {file.Owner.Name}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="slds-p-around_small slds-truncate" title="">
+                                    <lightning-formatted-date-time
+                                        value={file.CreatedDate}>
+                                    </lightning-formatted-date-time>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</template>

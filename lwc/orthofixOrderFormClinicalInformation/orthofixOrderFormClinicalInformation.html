@@ -1,0 +1,925 @@
+<!--
+  @description       : 
+  @author            : Lokesh Kesava | lokesh.kesava@argano.com
+  @group             : 
+  @last modified on  : 05-16-2024
+  @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
+-->
+<template>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-line slds-border_top slds-p-around_small">
+                <span class="slds-text-heading_small custom-underline custom-bold">Product Information</span>
+            </div>
+        </div>
+
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <!-- <div class="slds-text-heading_small">Selected Product Type : {formData.patientInformation.productType}
+                </div> -->
+                <p class="slds-text-heading_small">Selected Product Type : 
+                    
+                    <strong style="color:#6699cc"> {formData.patientInformation.productType}</strong> </p>
+            </div>
+        </div>
+        <div class="slds-col slds-medium-size_4-of-12 slds-large-size_9-of-12"></div>
+    </div>
+
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_12-of-12">
+            <div class="slds-line slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                <span class="slds-text-heading_small custom-underline custom-bold">Clinical Information</span>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+            <div class="slds-p-around_x-small slds-m-right_large">
+                <lightning-input type="date"
+                                 label="Date of Prescription"
+                                 placeholder="MM/DD/YYYY"
+                                 name="dateOfPrescription"
+                                 value={formData.dateOfPrescription}
+                                 required={requiredFields.dateOfPrescription}
+                                 onchange={handleInputChange}
+                                 disabled={clinicalDisableForm}
+                ></lightning-input>
+            </div>
+        </div>
+
+        <template if:true={showPhySioAccelRelatedFields}>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                <div class="slds-p-around_x-small slds-m-right_large">
+                    <lightning-input type="date"
+                                     label="Date of Injury"
+                                     placeholder="MM/DD/YYYY"
+                                     name="dateOfInjury"
+                                     value={formData.dateOfInjury}
+                                     required="true"
+                                     onchange={handleInputChange}
+                                     disabled={clinicalDisableForm}
+                    ></lightning-input>
+                </div>
+            </div>
+
+
+        </template>
+        <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+
+
+        <template if:true={showSpinalCervicalStimRelatedFields}>
+
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                <div class="slds-p-around_x-small slds-m-right_large">
+                    <lightning-combobox
+                            name="surgeryType"
+                            label="Surgery Type"
+                            placeholder="Select Surgery Type"
+                            options={picklistOptions.surgeryTypes}
+                            value={formData.surgeryType}
+                            onchange={handleInputChange}
+                            required={requiredFields.surgeryType}
+                            disabled={clinicalDisableForm}
+                    ></lightning-combobox>
+                </div>
+            </div>
+
+
+            <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+
+            <div class="slds-grid slds-wrap slds-p-bottom_medium slds-border_bottom">
+                <div class="slds-col slds-size_12-of-12">
+                    <div class="slds-line slds-p-top_medium slds-p-bottom_medium">
+                        <span class="slds-text-heading_small">{surgeryTypeHeaderText}</span>
+                    </div>
+                </div>
+                <template if:false={revisionSurgerySelected}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                        <div class="slds-p-around_x-small slds-m-right_large">
+                            <lightning-input type="date"
+                                             label="Surgery Date"
+                                             placeholder="MM/DD/YYYY"
+                                             name="surgeryDate"
+                                             value={formData.surgeryDate}
+                                             required={requiredFields.surgeryDate}
+                                             onchange={handleInputChange}
+                                             disabled={clinicalDisableForm}
+                            ></lightning-input>
+                        </div>
+                    </div>
+                </template>
+
+                <template if:true={revisionSurgerySelected}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                        <div class="slds-p-around_x-small slds-m-right_large">
+                            <lightning-input type="date"
+                                             label="Initial Surgery Date"
+                                             placeholder="MM/DD/YYYY"
+                                             name="initialSurgeryDate"
+                                             value={formData.initialSurgeryDate}
+                                             required={requiredFields.initialSurgeryDate}
+                                             onchange={handleInputChange}
+                                             disabled={clinicalDisableForm}
+                            ></lightning-input>
+                        </div>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                        <div class="slds-p-around_x-small slds-m-right_large">
+                            <lightning-input type="date"
+                                             label="Revision Surgery Date"
+                                             placeholder="MM/DD/YYYY"
+                                             name="revisionSurgeryDate"
+                                             value={formData.revisionSurgeryDate}
+                                             required="true"
+                                             onchange={handleInputChange}
+                                             disabled={clinicalDisableForm}
+                            ></lightning-input>
+                        </div>
+                    </div>
+                </template>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                    <div class="slds-p-around_x-small slds-m-right_large">
+                        <lightning-combobox
+                                name="surgeryStartingLevel"
+                                label="Starting Level"
+                                placeholder="Select Starting Level"
+                                options={picklistOptions.startinglevel}
+                                value={formData.surgeryStartingLevel}
+                                onchange={handleInputChange}
+                                required="true"
+                                disabled={clinicalDisableForm}
+                        ></lightning-combobox>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                    <div class="slds-p-around_x-small slds-m-right_large">
+                        <lightning-combobox
+                                name="surgeryEndingLevel"
+                                label="Ending Level"
+                                placeholder="Select Ending Level"
+                                options={picklistOptions.endinglevel}
+                                value={formData.surgeryEndingLevel}
+                                onchange={handleInputChange}
+                                required="true"
+                                disabled={clinicalDisableForm}
+                        ></lightning-combobox>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+                    <div class="slds-p-around_x-small slds-m-right_large">
+                        <lightning-input type="checkbox"
+                                         label="Multiple Fusion Locations"
+                                         name="multipleFusionLocations"
+                                         value={formData.multipleFusionLocations}
+                                         checked={formData.multipleFusionLocations}
+                                         required={requiredFields.multipleFusionLocations}
+                                         onchange={handleInputChange}
+                                         disabled={clinicalDisableForm}
+                        ></lightning-input>
+                    </div>
+                </div>
+                <template if:true={picklistOptions.initialsurgery}>
+                </template>
+                <template if:true={showSpinalCervicalStimRelatedFields}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                        <div class="slds-p-around_x-small slds-m-right_large">
+
+                            <div class="label-flex-container">
+                                <div>
+                                    <label class="slds-form-element__label labelclass">
+                                        <p>Initial Surgery</p>
+                                        <p>Please select all that apply</p>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="radiocolumnclass">
+                                <lightning-checkbox-group name="initialSurgery"
+                                                          options={picklistOptions.initialsurgery}
+                                                          value={formData.initialSurgery}
+                                                          onchange={handleInputChange}
+                                                          disabled={clinicalDisableForm}>
+                                                        </lightning-checkbox-group>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+                </template>
+
+                <template if:true={showSpinalCervicalStimRelatedFields}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                        <div class="slds-p-around_x-small slds-m-right_large">
+
+                            <div class="label-flex-container">
+                                <div>
+                                    <label class="slds-form-element__label labelclass">
+                                        <!-- <span class="slds-required">*</span> -->
+                                        Graft Source (Initial Graft Source)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="radiocolumnclass">
+                                <lightning-checkbox-group name="initialSurgeryGraftSource"
+                                                          options={picklistOptions.initialsurgerygraftsource}
+                                                          value={formData.initialSurgeryGraftSource}
+                                                          onchange={handleInputChange}
+                                                          disabled={clinicalDisableForm}></lightning-checkbox-group>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+                </template>
+                <template if:true={revisionSurgerySelected}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                        <div class="slds-p-around_x-small slds-m-right_large">
+
+                            <div class="label-flex-container">
+                                <div>
+                                    <label class="slds-form-element__label labelclass">
+                                        <!-- <span class="slds-required">*</span> -->
+                                        Revision Surgery
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="radiocolumnclass">
+                                <lightning-checkbox-group name="revisionSurgery"
+                                                          options={picklistOptions.revisionsurgery}
+                                                          value={formData.revisionSurgery}
+                                                          onchange={handleInputChange}
+                                                          disabled={clinicalDisableForm}></lightning-checkbox-group>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+                </template>
+                <template if:true={revisionSurgerySelected}>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                        <div class="slds-p-around_x-small slds-m-right_large">
+
+                            <div class="label-flex-container">
+                                <div>
+                                    <label class="slds-form-element__label labelclass">
+                                        <!-- <span class="slds-required">*</span> -->
+                                        Graft Source (Revision Graft Source)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="radiocolumnclass">
+                                <lightning-checkbox-group name="revisionSurgeryGraftSource"
+                                                          options={picklistOptions.revisionsurgerygraftsource}
+                                                          value={formData.revisionSurgeryGraftSource}
+                                                          onchange={handleInputChange}
+                                                          disabled={clinicalDisableForm}></lightning-checkbox-group>
+                            </div>
+                        </div>
+
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+    <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+    <template if:true={showPhySioAccelRelatedFields}>
+        <div class="slds-grid slds-wrap slds-p-bottom_medium slds-p-top_large">
+
+            <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+                <div class="slds-line slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                    <span class="slds-text-heading_small custom-bold">Diagnosis </span>
+                    <span class="slds-text-heading_small">(Select all that apply)</span>
+                </div>
+            </div>
+
+            <div class="slds-col slds-medium-size_12-of-12 slds-large-size_12-of-12">
+                <c-orthofix-order-form-diagnosis-item title="Fresh Fracture"
+                                                      physio-accel="true"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Non-Union Fracture"
+                                                      form-data={formData}
+                                                      physio-accel="true"
+                                                      show-x-ray-dates="true"
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Delayed Union Fracture"
+                                                      form-data={formData}
+                                                      physio-accel="true"
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Delayed Fusion"
+                                                      form-data={formData}
+                                                      physio-accel="true"
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Failed Fusion"
+                                                      form-data={formData}
+                                                      physio-accel="true"
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Non-Spinal Pseudarthrosis"
+                                                      form-data={formData}
+                                                      physio-accel="true"
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Other"
+                                                      form-data={formData}
+                                                      physio-accel="true"
+                                                      other="true"
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+
+
+            </div>
+
+
+        </div>
+    </template>
+
+    <div>
+        <c-orthofix-order-form-documents-item-desktop
+                form-data={formData}
+                required-fields={requiredFields}
+                picklist-options={picklistOptions}
+                clinical-disable-form={clinicalDisableForm}
+                oncheckboxchange={handleCheckboxChange}
+                order-cancelled={orderCanceled}
+                onfileexist={handleFilesCheck}
+        ></c-orthofix-order-form-documents-item-desktop>
+    </div>
+
+     <!-- <div class="slds-hide_medium">
+        <c-orthofix-order-form-documents-item
+                form-data={formData}
+                required-fields={requiredFields}
+                picklist-options={picklistOptions}
+                clinical-disable-form={clinicalDisableForm}
+        ></c-orthofix-order-form-documents-item>
+
+        <div class="slds-grid slds-wrap slds-p-bottom_medium slds-p-top_large">
+            <div class="slds-col slds-size_12-of-12 slds-p-around_x-small slds-align_absolute-center">
+                <div class="slds-p-around_small">
+                    <button type="button"
+                            class="slds-button slds-button_outline-brand slds-p-around_x-small custom-bold"
+                            style="border: 2px solid rgb(1 118 211);" onclick={generate}>Generate & Sign LOMN
+                    </button>
+                </div>
+                <div class="slds-p-around_small">
+                    <button type="button"
+                            class="slds-button slds-button_outline-brand slds-p-around_x-small custom-bold"
+                            style="border: 2px solid rgb(1 118 211);">UPLOAD DOCUMENTS
+                    </button>
+                </div>
+            </div>
+            <template if:true={isShowModal}>
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+                         aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_full">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <iframe src={formTitanUrl} allowtransparency="true" frameborder="0" style="width: 100%;" height="700" scrolling="no"></iframe>
+                        </div>
+
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral" onclick={hideModal}>Cancel</button>
+                        </footer>
+
+                    </div>
+                </section>
+            </template>
+        </div>
+
+    </div>  -->
+    <template if:true={showPhySioAccelRelatedFields}>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_12-of-12">
+                <div class="slds-line slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                    <span class="slds-text-heading_small custom-underline custom-bold">Fracture Information</span>
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                <div class="slds-p-around_x-small slds-m-right_large">
+                    <lightning-checkbox-group name="fractureType"
+                                              options={picklistOptions.fracturetype}
+                                              value={formData.fractureType}
+                                              label="Type"
+                                              required="true"
+                                              onchange={handleInputChange}
+                                              disabled={clinicalDisableForm}></lightning-checkbox-group>
+
+                </div>
+            </div>
+            <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                <div class="slds-p-around_x-small slds-m-right_large">
+                    <lightning-radio-group name="fractureAffectedSite"
+                                           options={picklistOptions.fractureaffectedsite}
+                                           value={formData.fractureAffectedSite}
+                                           required="true"
+                                           label="Affected Site"
+                                           disabled={clinicalDisableForm}
+                                           onchange={handleInputChange}></lightning-radio-group>
+                </div>
+            </div>
+            <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                <div class="slds-p-around_x-small slds-m-right_large">
+                    <lightning-radio-group name="fractureSide"
+                                           options={picklistOptions.fractureside}
+                                           value={formData.fractureSide}
+                                           required="true"
+                                           label="Side"
+                                           onchange={handleInputChange}
+                                           disabled={clinicalDisableForm}></lightning-radio-group>
+                </div>
+            </div>
+            <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                <div class="slds-p-around_x-small slds-m-right_large">
+                    <lightning-checkbox-group name="fractureSite"
+                                              options={picklistOptions.fracturesite}
+                                              value={formData.fractureSite}
+                                              required="true"
+                                              label="Fractured Site"
+                                              onchange={handleInputChange}
+                                              disabled={clinicalDisableForm}></lightning-checkbox-group>
+                </div>
+            </div>
+        </div>
+        <template if:true={showPhySioAccelRelatedFields}>
+            <div class="slds-grid slds-wrap slds-p-bottom_medium slds-p-top_large slds-border_top">
+
+                <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+                    <div class="slds-line">
+                        <span class="slds-text-heading_small custom-bold">Risk Factors </span>
+                        <span class="slds-text-heading_small">(List all that apply)</span>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+                    <c-orthofix-order-form-risk-factors-item title="Arthritis"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                    <c-orthofix-order-form-risk-factors-item title="Bone Depleting Medication"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                    <c-orthofix-order-form-risk-factors-item title="Diabetes"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                    <c-orthofix-order-form-risk-factors-item title="Current Nicotine Use"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                    <c-orthofix-order-form-risk-factors-item title="Obesity"
+                                                             show-bmi="true"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                    <c-orthofix-order-form-risk-factors-item title="Osteoporosis"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                    <c-orthofix-order-form-risk-factors-item title="Current Smoking Use"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                    <c-orthofix-order-form-risk-factors-item title="Infection"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                    <c-orthofix-order-form-risk-factors-item title="Other" other="true"
+                                                             form-data={formData}
+                                                             picklist-options={picklistOptions}
+                                                             required-fields={requiredFields}
+                                                             clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-risk-factors-item>
+                </div>
+            </div>
+        </template>
+        <template if:true={showPhySioAccelRelatedFields}>
+            <div class="slds-grid slds-wrap slds-p-bottom_medium slds-p-top_large slds-border_top">
+
+                <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+                    <div class="slds-line">
+                        <span class="slds-text-heading_small custom-bold">Previous Treatment</span>
+                        <span class="slds-text-heading_small">(List all that apply)</span>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+                    <c-orthofix-order-form-previous-treatment title="Fusion"
+                                                              form-data={formData}
+                                                              picklist-options={picklistOptions}
+                                                              required-fields={requiredFields}
+                                                              clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-previous-treatment>
+                    <c-orthofix-order-form-previous-treatment title="Fixation"
+                                                              form-data={formData}
+                                                              picklist-options={picklistOptions}
+                                                              required-fields={requiredFields}
+                                                              clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-previous-treatment>
+                    <template if:true={showAccelFields}>
+                        <c-orthofix-order-form-previous-treatment title="Revision"
+                                                                  form-data={formData}
+                                                                  picklist-options={picklistOptions}
+                                                                  required-fields={requiredFields}
+                                                                  clinical-disable-form={clinicalDisableForm}
+                        ></c-orthofix-order-form-previous-treatment>
+                    </template>
+                    <c-orthofix-order-form-previous-treatment title="Other"
+                                                              form-data={formData}
+                                                              picklist-options={picklistOptions}
+                                                              required-fields={requiredFields}
+                                                              clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-previous-treatment>
+                    <c-orthofix-order-form-previous-treatment title="Physical Therapy"
+                                                              form-data={formData}
+                                                              picklist-options={picklistOptions}
+                                                              required-fields={requiredFields}
+                                                              clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-previous-treatment>
+                    <c-orthofix-order-form-previous-treatment title="Pain Management"
+                                                              form-data={formData}
+                                                              picklist-options={picklistOptions}
+                                                              required-fields={requiredFields}
+                                                              clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-previous-treatment>
+                    <template if:true={showAccelFields}>
+                        <c-orthofix-order-form-previous-treatment title="Osteotomy"
+                                                                  form-data={formData}
+                                                                  picklist-options={picklistOptions}
+                                                                  required-fields={requiredFields}
+                                                                  clinical-disable-form={clinicalDisableForm}
+                        ></c-orthofix-order-form-previous-treatment>
+                    </template>
+                    <c-orthofix-order-form-previous-treatment title="Fixation Removal"
+                                                              form-data={formData}
+                                                              picklist-options={picklistOptions}
+                                                              required-fields={requiredFields}
+                                                              clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-previous-treatment>
+                    <template if:true={showAccelFields}>
+                        <c-orthofix-order-form-previous-treatment title="Casting/Splinting"
+                                                                  form-data={formData}
+                                                                  picklist-options={picklistOptions}
+                                                                  required-fields={requiredFields}
+                                                                  clinical-disable-form={clinicalDisableForm}
+                        ></c-orthofix-order-form-previous-treatment>
+                    </template>
+                    <template if:true={showPhysioFields}>
+                        <c-orthofix-order-form-previous-treatment title="Casting"
+                                                                  form-data={formData}
+                                                                  picklist-options={picklistOptions}
+                                                                  required-fields={requiredFields}
+                                                                  clinical-disable-form={clinicalDisableForm}
+                        ></c-orthofix-order-form-previous-treatment>
+                    </template>
+                    <c-orthofix-order-form-previous-treatment title="Steroid Therapy"
+                                                              form-data={formData}
+                                                              picklist-options={picklistOptions}
+                                                              required-fields={requiredFields}
+                                                              clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-previous-treatment>
+                    <template if:true={showAccelFields}>
+                        <c-orthofix-order-form-previous-treatment title="ORIF"
+                                                                  form-data={formData}
+                                                                  picklist-options={picklistOptions}
+                                                                  required-fields={requiredFields}
+                                                                  clinical-disable-form={clinicalDisableForm}
+                        ></c-orthofix-order-form-previous-treatment>
+                    </template>
+                    <c-orthofix-order-form-previous-treatment title="Debridement"
+                                                              form-data={formData}
+                                                              picklist-options={picklistOptions}
+                                                              required-fields={requiredFields}
+                                                              clinical-disable-form={clinicalDisableForm}
+                    ></c-orthofix-order-form-previous-treatment>
+                </div>
+            </div>
+        </template>
+
+
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_12-of-12">
+                <div class="slds-line slds-border_top slds-p-top_medium">
+                    <span class="slds-text-heading_small custom-underline custom-bold">Planned Treatment</span>
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+
+                <div class="slds-p-around_x-small slds-m-right_large">
+                    <lightning-input type="checkbox"
+                                     label="Fusion Surgery"
+                                     name="fusionSurgery"
+                                     value={formData.fusionSurgery}
+                                     checked={formData.fusionSurgery}
+                                     required={requiredFields.fusionSurgery}
+                                     onchange={handleInputChange}
+                                     disabled={clinicalDisableForm}
+                    ></lightning-input>
+                </div>
+
+            </div>
+            <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+
+            <template if:true={editedData.fusionSurgery}>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+
+                    <div class="slds-p-left_small slds-m-right_large">
+                        <lightning-input type="Date"
+                                         label="Fusion Surgery Date"
+                                         name="fusionSurgeryDate"
+                                         value={formData.fusionSurgeryDate}
+                                         required="true"
+                                         onchange={handleInputChange}
+                                         disabled={clinicalDisableForm}
+                        ></lightning-input>
+                    </div>
+
+                </div>
+                <div class="slds-col slds-medium-size_6-of-12 slds-large-size_9-of-12"></div>
+            </template>
+
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+                <div class="slds-p-left_medium slds-p-around_x-small slds-m-right_large">
+
+                    <div class="label-flex-container">
+                        <div>
+                            <label class="slds-form-element__label labelclass">
+                                Graft Source
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <lightning-checkbox-group name="plannedTreatmentGraftSource"
+                                                  options={picklistOptions.initialsurgerygraftsource}
+                                                  value={formData.plannedTreatmentGraftSource}
+                                                  onchange={handleInputChange}
+                                                  disabled={clinicalDisableForm}></lightning-checkbox-group>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <template if:true={showAccelFields}>
+            <div class="slds-p-left_small slds-grid slds-wrap">
+                <div class="slds-col slds-size_12-of-12">
+                    <div class="slds-line slds-p-top_medium">
+                        Fracture Gap
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                    <div class="slds-p-around_x-small slds-m-right_large">
+                        <lightning-input type="checkbox"
+                                         label="> 1 cm"
+                                         name="greaterThan1cm"
+                                         value={formData.greaterThan1cm}
+                                         checked={formData.greaterThan1cm}
+                                         required={requiredFields.greaterThan1cm}
+                                         onchange={handleInputChange}
+                                         disabled={clinicalDisableForm}
+                        ></lightning-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_3-of-12">
+                    <div class="slds-p-around_x-small slds-m-right_large">
+                        <lightning-input type="checkbox"
+                                         label="Skeletally Mature"
+                                         name="skeletallyMature"
+                                         value={formData.skeletallyMature}
+                                         checked={formData.skeletallyMature}
+                                         required={requiredFields.skeletallyMature}
+                                         onchange={handleInputChange}
+                                         disabled={clinicalDisableForm}
+                        ></lightning-input>
+                    </div>
+                </div>
+            </div>
+
+
+        </template>
+    </template>
+    <template if:true={showSpinalCervicalStimRelatedFields}>
+        <div class="slds-grid slds-wrap slds-p-bottom_medium slds-p-top_large">
+
+            <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+                <div class="slds-line slds-border_top slds-p-top_medium slds-p-bottom_medium">
+                    <span class="slds-text-heading_small custom-bold">Diagnosis</span>
+                    <span class="slds-text-heading_small">(Select all that apply)</span>
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+                <c-orthofix-order-form-diagnosis-item title="Degenerative Disc Disease"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Internal Disc Disruption"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Herniated Nucleus Pulposus"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Pseudarthrosis (Failed Fusion)"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Spondylolisthesis"
+                                                      form-data={formData}
+                                                      show-grade="true"
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+
+                <c-orthofix-order-form-diagnosis-item title="Spinal Stenosis"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Spondylolysis"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Instability"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Radiculopathy"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+                <c-orthofix-order-form-diagnosis-item title="Other" other="true"
+                                                      form-data={formData}
+                                                      picklist-options={picklistOptions}
+                                                      required-fields={requiredFields}
+                                                      clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-diagnosis-item>
+
+
+            </div>
+        </div>
+    </template>
+    <template if:true={showSpinalCervicalStimRelatedFields}>
+        <div class="slds-grid slds-wrap slds-p-bottom_medium slds-p-top_large slds-border_top">
+
+            <div class="slds-col slds-size_12-of-12 slds-p-around_x-small">
+                <div class="slds-line">
+                    <span class="slds-text-heading_small custom-bold">Risk Factors </span>
+                    <span class="slds-text-heading_small">(List all that apply)</span>
+                </div>
+            </div>
+
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_12-of-12 slds-large-size_12-of-12">
+                <c-orthofix-order-form-risk-factors-item title="Allo/Mixed Graft"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Arthritis"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Bone Depleting Medication"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Diabetes"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Gross Instability"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Multilevel Fusion"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Current Nicotine Use"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="No Instrumentation"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Obesity"
+                                                         show-bmi="true"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Previous Spine Surgery"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Osteoporosis"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Previous Failed Fusion Unrelated to Current Surgery"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Current Smoking Use"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                ></c-orthofix-order-form-risk-factors-item>
+                <c-orthofix-order-form-risk-factors-item title="Other" other="true"
+                                                         form-data={formData}
+                                                         picklist-options={picklistOptions}
+                                                         required-fields={requiredFields}
+                                                         clinical-disable-form={clinicalDisableForm}
+                ></c-orthofix-order-form-risk-factors-item>
+            </div>
+        </div>
+    </template>
+
+
+</template>

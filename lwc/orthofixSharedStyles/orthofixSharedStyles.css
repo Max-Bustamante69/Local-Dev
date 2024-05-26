@@ -1,0 +1,19 @@
+:host{
+    /* --brand-color-main: #009ADD; */
+    --slds-c-button-color-background: var(--brand-color-main);
+    --slds-c-input-radius-border:3px;
+    --slds-c-button-radius-border:3px;
+    --of-button-font-size:0.75rem;
+    --lwc-brandTextLink: var(--brand-color-main);
+
+    
+}
+/* button{
+    background-color: red;
+} */
+.custom-underline{
+    text-decoration: underline;
+}
+.custom-bold{
+    font-weight: bold;
+}

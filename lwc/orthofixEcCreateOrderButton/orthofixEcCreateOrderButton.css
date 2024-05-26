@@ -1,0 +1,27 @@
+/* @import 'c/orthofixSharedStyles'; */
+:host {
+    display: flex;
+    justify-content: flex-end;
+}
+/* .my-class-sample{
+    background-color: red;
+}
+
+.my-class-sample button{
+    color: yellowgreen;
+} */
+
+.wrapper{
+    position: relative;
+}
+
+
+
+.wrapper .absolute-item{
+    position: absolute;
+    top: 2.75rem;
+    right: 1rem;
+    width: max-content;
+    z-index: 2;
+
+}
