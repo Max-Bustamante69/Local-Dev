@@ -2,7 +2,7 @@
   @description       : 
   @author            : Lokesh Kesava | lokesh.kesava@argano.com
   @group             : 
-  @last modified on  : 04-05-2024
+  @last modified on  : 05-24-2024
   @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 -->
 <template>
@@ -21,12 +21,20 @@
         ></c-orthofix-order-type-selection>
         </template>
         <template if:true={ShowCreateForm}>
-            <c-create-order-page
+            <!-- <c-create-order-page
                 selected-record-type={selectedRecordTypeId}
                 selected-record-type-name={selectedRecordTypeName}
                 oncancel={handleCancel}
                 record-id={recordId}
-            ></c-create-order-page>
+            ></c-create-order-page> -->
+            <div class="slds-box slds-theme_default slds-p-around_medium">
+            <c-orthofix-inventory-order-form
+            selected-record-type={selectedRecordTypeId}
+            selected-record-type-name={selectedRecordTypeName}
+            record-id={recordId}
+            ></c-orthofix-inventory-order-form>
+        </div>
+
         </template>
         <template if:true={showPatientOrderComp}>
         <div class="slds-box slds-theme_default slds-p-around_medium">

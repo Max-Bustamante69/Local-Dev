@@ -1,59 +1,59 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 
 export default class OrthofixDevicesComp extends LightningElement {
+    @api formData;
+    @api picklistOptions;
+    @api requiredFields;
 
-    @track deviceList = [{ id: 1, modelNumber: '', quantity: 0 }];
-    @track accessoryList = [{ id: 1, modelNumber: '', quantity: 0 }];
-    
-    modelOptions = []; // Populate with model number options
+    @track deviceList = [{ id: 0, modelNumber: '', liveOrDemo: '', quantity: 0 }];
 
     addDeviceRow() {
-        const newId = this.deviceList.length + 1;
-        this.deviceList = [
-            ...this.deviceList,
-            { id: newId, modelNumber: '', quantity: 0, showDelete: true }
-        ];
+        const newId = this.deviceList.length > 0 ? this.deviceList[this.deviceList.length - 1].id + 1 : 0;
+        const newDevice = {
+            id: newId,
+            modelNumber: '',
+            liveOrDemo: '',
+            quantity: 0
+        };
+        
+        this.deviceList.push(newDevice);
+        this.deviceList = [...this.deviceList]; // Update the array to trigger reactivity
+        
+        // Dispatch custom event with the new device data
+        const addDeviceEvent = new CustomEvent('adddevice', { detail: { deviceList: this.deviceList } });
+        this.dispatchEvent(addDeviceEvent);
     }
+
     deleteDeviceRow(event) {
-        const index = event.currentTarget.dataset.id;
-        if (this.deviceList.length > 1) {
-            this.deviceList = this.deviceList.filter((_, idx) => idx !== parseInt(index));
-        }
-        if (this.deviceList.length === 1) {
-            // Ensure the delete button is not shown for the only row
-            this.deviceList[0].showDelete = false;
-        }
+        const index = event.target.dataset.id;
+        this.deviceList.splice(index, 1);
+        this.deviceList = [...this.deviceList]; // Update the array to trigger reactivity
+
+        // Dispatch custom event with the updated device list
+        const deleteDeviceEvent = new CustomEvent('deletedevice', { detail: { deviceList: this.deviceList } });
+        this.dispatchEvent(deleteDeviceEvent);
     }
 
     handleModelChange(event) {
-        const index = event.target.dataset.index;
+        const index = event.target.dataset.id;
         this.deviceList[index].modelNumber = event.detail.value;
-        this.deviceList = [...this.deviceList]; 
+        this.deviceList = [...this.deviceList]; // Update the array to trigger reactivity
     }
 
     handleQuantityChange(event) {
-        // Retrieve the index using event's dataset property
-        const index = parseInt(event.target.dataset.index, 10);
-
-        // Check if the retrieved index is within the bounds of the deviceList array
-        if (index >= 0 && index < this.deviceList.length) {
-            // Clone the deviceList array to maintain immutability and reactivity
-            let updatedList = [...this.deviceList];
-            
-            // Convert the input value to a number and update the quantity for the device
-            updatedList[index] = { ...updatedList[index], quantity: parseInt(event.detail.value, 10) };
-            
-            // Update the deviceList with the new array to trigger the reactive update
-            this.deviceList = updatedList;
-        } else {
-            // Handle the error case where index is not valid
-            console.error('Invalid index for quantity change');
-        }
+        const index = event.target.dataset.id;
+        this.deviceList[index].quantity = event.detail.value;
+        this.deviceList = [...this.deviceList]; // Update the array to trigger reactivity
     }
 
-     get isAddButtonDisabled() {
+    handleLiveDemoChange(event) {
+        const index = event.target.dataset.id;
+        this.deviceList[index].liveOrDemo = event.detail.value;
+        this.deviceList = [...this.deviceList]; // Update the array to trigger reactivity
+    }
+
+    get isAddButtonDisabled() {
         const lastDevice = this.deviceList[this.deviceList.length - 1];
         return !lastDevice.modelNumber || lastDevice.quantity <= 0;
     }
-    
 }

@@ -1,12 +1,25 @@
-import { LightningElement , track } from 'lwc';
+import { LightningElement , track , api} from 'lwc';
 
 export default class OrthofixAccessoriesComp extends LightningElement {
+
+    @api formData;
+    @api picklistOptions;
+    @api requiredFields;
 
     @track deviceList = [{ id: 1, modelNumber: '', quantity: 0 }];
     @track accessoryList = [{ id: 1, modelNumber: '', quantity: 0 }];
     
-    modelOptions = []; // Populate with model number options
-
+    accessoriesOptions = [
+        { label: 'CS 5505 - Comfort Collar', value: 'CS 5505' },
+        { label: 'PS 5302 - Sure Fit Cushion (small)', value: 'PS 5302' },
+        { label: 'PS 5302/5303 Optional Long Strap', value: 'PS 5302/5303' },
+        { label: 'PS 5302/5303 - Replaceable Velcro Strap', value: 'PS 5302/5303 Velcro' },
+        { label: 'PS 5303 - Sure Fit Cushion (large)', value: 'PS 5303' },
+        { label: 'PS 5313 – Short Velcro Strap', value: 'PS 5313' },
+        { label: 'PS 5313/5314 - Replaceable Strap (long)', value: 'PS 5313/5314' },
+        { label: 'PS 5315 - Replaceable Strap', value: 'PS 5315' },
+        { label: 'SS 5212 - Suspenders', value: 'SS 5212' }
+    ]; 
     addDeviceRow() {
         const newId = this.deviceList.length + 1;
         this.deviceList = [

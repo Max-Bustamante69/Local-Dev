@@ -2,7 +2,7 @@
  * @description       :
  * @author            : Lokesh Kesava | lokesh.kesava@argano.com
  * @group             :
- * @last modified on  : 05-06-2024
+ * @last modified on  : 05-23-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
  **/
 import {api, track, LightningElement, wire} from 'lwc';
@@ -343,18 +343,20 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
 
 
     checkFiles() {
-        console.log('this.recordId' , this.recordId);
-        hasFiles({ orderId: this.recordId })
-            .then(result => {
-                this.doesFileExist = result;
-                console.log('doesFileExist after result', this.doesFileExist);
-                
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                this.doesFileExist = undefined;
-            });
-            return this.doesFileExist;
+        return new Promise((resolve, reject) => {
+            console.log('this.recordId', this.recordId);
+            hasFiles({ orderId: this.recordId })
+                .then(result => {
+                    this.doesFileExist = result;
+                    console.log('doesFileExist after result', this.doesFileExist);
+                    resolve(this.doesFileExist);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    this.doesFileExist = undefined;
+                    reject(error);
+                });
+        });
     }
 
     getOrder() {
@@ -561,8 +563,8 @@ export default class OrthofixOrderForm extends NavigationMixin(LightningElement)
                 }
     }
 
-    handleSubmitToIA() {
-        let resultcheckfile = this.checkFiles();
+    async handleSubmitToIA() {
+        let resultcheckfile = await this.checkFiles();
         console.log('resultcheckfile', resultcheckfile);
         console.log('this.prescriptionChecked', this.prescriptionChecked);
         console.log('this.checkUserRoleFitter',  this.checkUserRoleFitter);

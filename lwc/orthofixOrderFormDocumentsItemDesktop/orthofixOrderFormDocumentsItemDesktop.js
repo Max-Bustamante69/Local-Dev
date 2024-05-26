@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : manish.tyagi@argano.com
  * @group             : 
- * @last modified on  : 05-16-2024
+ * @last modified on  : 05-23-2024
  * @last modified by  : Lokesh Kesava | lokesh.kesava@argano.com
 **/
 import {showSuccess, showError, showReduceErrors, showLoader, hideLoader} from 'c/orthofixNotificationUtility';
@@ -148,7 +148,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         let name = event.target.name;
         console.log('name', name);
 
-        if(name === 'PRESCRIPTION'){
+        if(name === 'RX'){
             console.log('inside doctypechange');
             const isChecked = event.detail.checked;
             console.log('isChecked', isChecked);
@@ -174,7 +174,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
         console.log('this.selectedValueList', this.selectedValueList);
         this.showOtherMultiSelect = this.selectedValueList == 'Other'
         this.otherRequired = this.showOtherMultiSelect;
-        if(this.selectedValueList == 'PRESCRIPTION'){
+        if(this.selectedValueList == 'RX'){
             isChecked = true;
             console.log('inside 1')
         } 
@@ -310,7 +310,7 @@ export default class OrthofixOrderFormDocumentsItemDesktop extends NavigationMix
                     OtherdocumentTypes.push(otherDocType);
                 }
 
-                if (docType === "PRESCRIPTION") {
+                if (docType === "RX") {
                     isPrescriptionExist = true; 
                 }
 
